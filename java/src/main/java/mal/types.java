@@ -25,6 +25,19 @@ public class types {
         final public String getType() {
             return type;
         }
+
+        final public <T extends MalType> T assertType(Class<T> type) throws MalException {
+            if (type.isInstance(this)) return type.cast(this);
+            else throw new MalException(String.format("Wrong argument type: expected %s, received %s.", type.getSimpleName(), this.getClass().getSimpleName()));
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj.getClass() != this.getClass()) return false;
+
+            MalType that = (MalType)obj;
+            return this.getJValue().equals(that.getJValue());
+        }
     }
 
     public static class MalInt extends MalType {
