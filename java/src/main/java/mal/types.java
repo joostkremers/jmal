@@ -18,11 +18,11 @@ public class types {
 
         public abstract String pr_str(boolean readably);
 
-        public String toString() {
+        final public String toString() {
             return pr_str(true);
         }
 
-        public String getType() {
+        final public String getType() {
             return type;
         }
     }
