@@ -82,6 +82,7 @@ public class step4_if_fn_do {
                 return malFn(argList.subList(1,size), env);
             }
 
+            // If not a special form, evaluate the list as a function call.
             MalList evaledList = (MalList)eval_ast(arg, env);
 
             if (!(evaledList.get(0) instanceof MalCallable))
@@ -91,6 +92,7 @@ public class step4_if_fn_do {
                 return fn.apply(evaledList.subList(1, evaledList.size()));
             }
         }
+        // If not a list, evaluate and return.
         else return eval_ast(arg, env);
     }
 
