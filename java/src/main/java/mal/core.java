@@ -6,6 +6,7 @@ import mal.types.MalException;
 import mal.types.MalFunction;
 import mal.types.MalInt;
 import mal.types.MalList;
+import mal.types.MalSequence;
 import mal.types.MalSymbol;
 import mal.types.MalType;
 
@@ -127,12 +128,145 @@ public class core {
             }
         };
 
+    static MalFunction malPrn = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+
+                String pp = args.get(0).pr_str(true);
+                System.out.print(pp);
+                return types.Nil;
+            }
+        };
+
+    static MalFunction malList = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                return args;
+            }
+        };
+
+    static MalFunction malListP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+
+                if (args.get(0) instanceof MalList) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malEmptyP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                int size = args.get(0).assertType(MalSequence.class).size();
+
+                if (size == 0) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malCount = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                int size = args.get(0).assertType(MalSequence.class).size();
+
+                return new MalInt(size);
+            }
+        };
+
+    static MalFunction malEqual = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 2);
+
+                if (args.get(0).equals(args.get(1))) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malLessThan = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                int size = args.size();
+                MalInt arg1 = args.get(0).assertType(MalInt.class);
+
+                for (int i = 1; i < size; i++) {
+                    MalInt arg2 = args.get(i).assertType(MalInt.class);
+
+                    if (!arg1.isLessThan(arg2)) return types.False;
+                    arg1 = arg2;
+                }
+                return types.True;
+            }
+        };
+
+    static MalFunction malLessThanOrEqual = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                int size = args.size();
+                MalInt arg1 = args.get(0).assertType(MalInt.class);
+
+                for (int i = 1; i < size; i++) {
+                    MalInt arg2 = args.get(i).assertType(MalInt.class);
+
+                    if (!arg1.isLessThanOrEqual(arg2)) return types.False;
+                    arg1 = arg2;
+                }
+                return types.True;
+            }
+        };
+
+    static MalFunction malGreaterThan = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                int size = args.size();
+                MalInt arg1 = args.get(0).assertType(MalInt.class);
+
+                for (int i = 1; i < size; i++) {
+                    MalInt arg2 = args.get(i).assertType(MalInt.class);
+
+                    if (!arg1.isGreaterThan(arg2)) return types.False;
+                    arg1 = arg2;
+                }
+                return types.True;
+            }
+        };
+
+    static MalFunction malGreaterThanOrEqual = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                int size = args.size();
+                MalInt arg1 = args.get(0).assertType(MalInt.class);
+
+                for (int i = 1; i < size; i++) {
+                    MalInt arg2 = args.get(i).assertType(MalInt.class);
+
+                    if (!arg1.isGreaterThanOrEqual(arg2)) return types.False;
+                    arg1 = arg2;
+                }
+                return types.True;
+            }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
-        ns.put(new MalSymbol("+"), malAdd);
-        ns.put(new MalSymbol("-"), malSubtract);
-        ns.put(new MalSymbol("*"), malMultiply);
-        ns.put(new MalSymbol("/"), malDivide);
+        ns.put(new MalSymbol("prn"),    malPrn);
+        ns.put(new MalSymbol("list"),   malList);
+        ns.put(new MalSymbol("list?"),  malListP);
+        ns.put(new MalSymbol("empty?"), malEmptyP);
+        ns.put(new MalSymbol("count"),  malCount);
+        ns.put(new MalSymbol("="),      malEqual);
+        ns.put(new MalSymbol("<"),      malLessThan);
+        ns.put(new MalSymbol("<="),     malLessThanOrEqual);
+        ns.put(new MalSymbol(">"),      malGreaterThan);
+        ns.put(new MalSymbol(">="),     malGreaterThanOrEqual);
+        ns.put(new MalSymbol("+"),      malAdd);
+        ns.put(new MalSymbol("-"),      malSubtract);
+        ns.put(new MalSymbol("*"),      malMultiply);
+        ns.put(new MalSymbol("/"),      malDivide);
     }
 }
