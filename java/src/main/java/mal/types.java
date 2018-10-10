@@ -121,6 +121,20 @@ public class types {
         public MalList subList(int beg, int end) {
             return new MalList(jValue.subList(beg, end));
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj.getClass() != this.getClass()) return false;
+
+            MalSequence that = (MalSequence)obj;
+            if (that.size() != this.size()) return false;
+
+            for (int i=0; i<this.size(); i++) {
+                if (!this.get(i).equals(that.get(i))) return false;
+            }
+            return true;
+        }
     }
 
     public static class MalList extends MalSequence {
