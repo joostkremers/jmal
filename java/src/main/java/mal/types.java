@@ -40,7 +40,7 @@ public class types {
         }
     }
 
-    public static class MalInt extends MalType {
+    public static class MalInt extends MalType implements Comparable<MalInt> {
         Integer jValue;
 
         public MalInt(int value) {
@@ -56,6 +56,44 @@ public class types {
         @Override
         public String pr_str(boolean readably) {
             return Integer.toString(jValue);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (!(obj instanceof MalInt)) return false;
+
+            MalInt that = (MalInt)obj;
+            return (this.jValue == that.jValue);
+        }
+
+        @Override
+        public int hashCode() {
+            return jValue.hashCode();
+        }
+
+        @Override
+        public int compareTo(MalInt that) {
+            //returns -1 if "this" object is less than "that" object
+            //returns 0 if they are equal
+            //returns 1 if "this" object is greater than "that" object
+            return this.jValue.compareTo(that.jValue);
+        }
+
+        boolean isGreaterThan(MalInt that) {
+            return this.compareTo(that) > 0;
+        }
+
+        boolean isGreaterThanOrEqual(MalInt that) {
+            return this.compareTo(that) >= 0;
+        }
+
+        boolean isLessThan(MalInt that) {
+            return this.compareTo(that) < 0;
+        }
+
+        boolean isLessThanOrEqual(MalInt that) {
+            return this.compareTo(that) <= 0;
         }
     }
 
