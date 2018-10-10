@@ -269,7 +269,7 @@ public class types {
         }
 
         @Override
-        public boolean equals(Object obj){
+        public boolean equals(Object obj) {
             if (this == obj) return true;
             if (!(obj instanceof MalSymbol)) return false;
 
@@ -283,7 +283,7 @@ public class types {
         }
 
         @Override
-        public int compareTo(MalSymbol that){
+        public int compareTo(MalSymbol that) {
             //returns -1 if "this" object is less than "that" object
             //returns 0 if they are equal
             //returns 1 if "this" object is greater than "that" object
