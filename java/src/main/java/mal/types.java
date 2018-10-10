@@ -8,8 +8,8 @@ import java.util.StringJoiner;
 
 public class types {
     public abstract static class MalType {
-
         protected String type = "type";
+        Object jValue = null; // The Java value representing the MalType.
 
         /**
          * Return the Java value of a MalType.
@@ -28,58 +28,58 @@ public class types {
     }
 
     public static class MalInt extends MalType {
-        private int value;
+        Integer jValue;
 
         public MalInt(int value) {
-            this.value = value;
+            this.jValue = value;
             this.type = "int";
         }
 
         @Override
         public Integer getJValue() {
-            return value;
+            return jValue;
         }
 
         @Override
         public String pr_str(boolean readably) {
-            return Integer.toString(value);
+            return Integer.toString(jValue);
         }
     }
 
     public static abstract class MalSequence extends MalType {
-        List<MalType> items;
+        List<MalType> jValue;
 
         @Override
         public List<MalType> getJValue() {
-            return items;
+            return jValue;
         }
 
         public int size() {
-            return items.size();
+            return jValue.size();
         }
 
         public void add(MalType e) {
-            items.add(e);
+            jValue.add(e);
         }
 
         public MalType get(int i) {
-            return items.get(i);
+            return jValue.get(i);
         }
 
         // Note: subList always returns a list, even when called on a vector.
         public MalList subList(int beg, int end) {
-            return new MalList(items.subList(beg, end));
+            return new MalList(jValue.subList(beg, end));
         }
     }
 
     public static class MalList extends MalSequence {
         public MalList() {
-            this.items = new LinkedList<MalType>();
+            this.jValue = new LinkedList<MalType>();
             this.type = "list";
         }
 
         public MalList(List<MalType> items) {
-            this.items = items;
+            this.jValue = items;
             this.type = "list";
         }
 
@@ -87,7 +87,7 @@ public class types {
         public String pr_str(boolean readably) {
             StringJoiner result = new StringJoiner(" ", "(", ")");
 
-            for(MalType item : items) {
+            for(MalType item : jValue) {
                 result.add(item.pr_str(readably));
             }
 
@@ -97,12 +97,12 @@ public class types {
 
     public static class MalVector extends MalSequence {
         public MalVector() {
-            this.items = new ArrayList<MalType>();
+            this.jValue = new ArrayList<MalType>();
             this.type = "vector";
         }
 
         public MalVector(List<MalType> items) {
-            this.items = items;
+            this.jValue = items;
             this.type = "vector";
         }
 
@@ -110,7 +110,7 @@ public class types {
         public String pr_str(boolean readably) {
             StringJoiner result = new StringJoiner(" ", "[", "]");
 
-            for(MalType item : items) {
+            for(MalType item : jValue) {
                 result.add(item.pr_str(readably));
             }
 
@@ -118,36 +118,36 @@ public class types {
         }
 
         public MalVector subVector(int beg, int end) {
-            return new MalVector(items.subList(beg, end));
+            return new MalVector(jValue.subList(beg, end));
         }
     }
 
     public static class MalHash extends MalType {
-        private HashMap<MalType,MalType> map;
+        HashMap<MalType,MalType> jValue;
 
         public MalHash() {
-            map = new HashMap<MalType,MalType>();
-            this.type = "hash-map";
+            jValue = new HashMap<MalType,MalType>();
+            this.type = "hash-jValue";
         }
 
         public void put(MalType k, MalType v) {
-            map.put(k, v);
+            jValue.put(k, v);
         }
 
         public MalType get(MalType k) {
-            return map.get(k);
+            return jValue.get(k);
         }
 
         @Override
         public HashMap getJValue() {
-            return map;
+            return jValue;
         }
 
         @Override
         public String pr_str(boolean readably) {
             StringJoiner result = new StringJoiner(", ", "{", "}");
 
-            for (HashMap.Entry<MalType,MalType> entry : map.entrySet()) {
+            for (HashMap.Entry<MalType,MalType> entry : jValue.entrySet()) {
                 MalType key = entry.getKey();
                 MalType value = entry.getValue();
                 result.add(key.pr_str(readably) + " " + value.pr_str(readably));
@@ -158,25 +158,25 @@ public class types {
     }
 
     public static class MalString extends MalType {
-        private String value;
+        String jValue;
 
-        public MalString(String value) {
-            this.value = value;
+        public MalString(String jValue) {
+            this.jValue = jValue;
             this.type = "string";
         }
 
         @Override
         public String getJValue() {
-            return value;
+            return jValue;
         }
 
         @Override
         public String pr_str(boolean readably) {
-            if (readably == false) return value;
+            if (readably == false) return jValue;
             else {
                 String result;
 
-                result = value.replace("\\", "\\\\");
+                result = jValue.replace("\\", "\\\\");
                 result = result.replace("\n", "\\n");
                 result = result.replace("\"", "\\\"");
 
@@ -186,21 +186,21 @@ public class types {
     }
 
     public static class MalSymbol extends MalType implements Comparable<MalSymbol> {
-        private String name;
+        String jValue;
 
         public MalSymbol(String name) {
-            this.name = name;
+            this.jValue = name;
             this.type = "symbol";
         }
 
         @Override
         public String getJValue() {
-            return name;
+            return jValue;
         }
 
         @Override
         public String pr_str(boolean readably) {
-            return name;
+            return jValue;
         }
 
         @Override
@@ -209,12 +209,12 @@ public class types {
             if (!(obj instanceof MalSymbol)) return false;
 
             MalSymbol that = (MalSymbol)obj;
-            return this.name.equals(that.name);
+            return this.jValue.equals(that.jValue);
         }
 
         @Override
-        public int hashCode(){
-            return name.hashCode();
+        public int hashCode() {
+            return jValue.hashCode();
         }
 
         @Override
@@ -222,26 +222,26 @@ public class types {
             //returns -1 if "this" object is less than "that" object
             //returns 0 if they are equal
             //returns 1 if "this" object is greater than "that" object
-            return this.name.compareTo(that.name);
+            return this.jValue.compareTo(that.jValue);
         }
     }
 
     public static class MalKeyword extends MalType {
-        private String name;
+        String jValue;
 
         public MalKeyword(String name) {
-            this.name = name;
+            this.jValue = name;
             this.type = "keyword";
         }
 
         @Override
         public String getJValue() {
-            return name;
+            return jValue;
         }
 
         @Override
         public String pr_str(boolean readably) {
-            return name;
+            return jValue;
         }
     }
 
@@ -265,21 +265,21 @@ public class types {
     public static final MalNil Nil = new MalNil();
 
     private static class MalBoolean extends MalType {
-        Boolean value;
+        Boolean jValue;
 
         public MalBoolean(boolean value) {
-            this.value = value;
+            this.jValue = value;
             this.type = "boolean";
         }
 
         @Override
         public Boolean getJValue() {
-            return value;
+            return jValue;
         }
 
         @Override
         public String pr_str(boolean readably) {
-            return value.toString();
+            return jValue.toString();
         }
     }
 
