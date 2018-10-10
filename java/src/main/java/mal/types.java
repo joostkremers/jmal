@@ -8,8 +8,8 @@ import java.util.StringJoiner;
 
 public class types {
     public abstract static class MalType {
-        protected String type = "type";
         Object jValue = null; // The Java value representing the MalType.
+        String type = "type"; // The Mal name of the type.
 
         /**
          * Return the Java value of a MalType.
