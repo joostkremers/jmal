@@ -25,6 +25,13 @@ public class step4_if_fn_do {
             repl_env.set(symbol, core.ns.get(symbol));
         }
 
+        // Define `not'.
+        try {
+            rep("(def! not (fn* (a) (if a false true)))");
+        } catch(MalException ex) {
+            System.out.println("Internal error.");
+        }
+
         while (true) {
             input = console.readLine("user> ");
             if (input == null) {      // Test for EOF
