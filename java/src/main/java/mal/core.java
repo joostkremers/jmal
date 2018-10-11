@@ -1,12 +1,14 @@
 package mal;
 
 import java.util.HashMap;
+import java.util.StringJoiner;
 
 import mal.types.MalException;
 import mal.types.MalFunction;
 import mal.types.MalInt;
 import mal.types.MalList;
 import mal.types.MalSequence;
+import mal.types.MalString;
 import mal.types.MalSymbol;
 import mal.types.MalType;
 
@@ -128,17 +130,6 @@ public class core {
             }
         };
 
-    static MalFunction malPrn = new MalFunction() {
-            @Override
-            public MalType apply(MalList args) throws MalException {
-                assertNArgs(args, 1);
-
-                String pp = args.get(0).pr_str(true);
-                System.out.print(pp);
-                return types.Nil;
-            }
-        };
-
     static MalFunction malList = new MalFunction() {
             @Override
             public MalType apply(MalList args) throws MalException {
@@ -254,22 +245,76 @@ public class core {
             }
         };
 
+    // Strings functions.
+    static MalFunction malPrStr = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                StringJoiner result = new StringJoiner(" ");
+
+                for (MalType item : args.getJValue()) {
+                    result.add(item.pr_str(true));
+                }
+                return new MalString(result.toString());
+            }
+        };
+
+    static MalFunction malStr = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                StringJoiner result = new StringJoiner("");
+
+                for (MalType item : args.getJValue()) {
+                    result.add(item.pr_str(false));
+                }
+                return new MalString(result.toString());
+            }
+        };
+
+    static MalFunction malPrn = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                StringJoiner result = new StringJoiner(" ");
+
+                for (MalType item : args.getJValue()) {
+                    result.add(item.pr_str(true));
+                }
+                System.out.println(result.toString());
+                return types.Nil;
+            }
+        };
+
+    static MalFunction malPrintln = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                StringJoiner result = new StringJoiner(" ");
+
+                for (MalType item : args.getJValue()) {
+                    result.add(item.pr_str(false));
+                }
+                System.out.println(result.toString());
+                return types.Nil;
+            }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
-        ns.put(new MalSymbol("prn"),    malPrn);
-        ns.put(new MalSymbol("list"),   malList);
-        ns.put(new MalSymbol("list?"),  malListP);
-        ns.put(new MalSymbol("empty?"), malEmptyP);
-        ns.put(new MalSymbol("count"),  malCount);
-        ns.put(new MalSymbol("="),      malEqual);
-        ns.put(new MalSymbol("<"),      malLessThan);
-        ns.put(new MalSymbol("<="),     malLessThanOrEqual);
-        ns.put(new MalSymbol(">"),      malGreaterThan);
-        ns.put(new MalSymbol(">="),     malGreaterThanOrEqual);
-        ns.put(new MalSymbol("+"),      malAdd);
-        ns.put(new MalSymbol("-"),      malSubtract);
-        ns.put(new MalSymbol("*"),      malMultiply);
-        ns.put(new MalSymbol("/"),      malDivide);
+        ns.put(new MalSymbol("list"),    malList);
+        ns.put(new MalSymbol("list?"),   malListP);
+        ns.put(new MalSymbol("empty?"),  malEmptyP);
+        ns.put(new MalSymbol("count"),   malCount);
+        ns.put(new MalSymbol("="),       malEqual);
+        ns.put(new MalSymbol("<"),       malLessThan);
+        ns.put(new MalSymbol("<="),      malLessThanOrEqual);
+        ns.put(new MalSymbol(">"),       malGreaterThan);
+        ns.put(new MalSymbol(">="),      malGreaterThanOrEqual);
+        ns.put(new MalSymbol("+"),       malAdd);
+        ns.put(new MalSymbol("-"),       malSubtract);
+        ns.put(new MalSymbol("*"),       malMultiply);
+        ns.put(new MalSymbol("/"),       malDivide);
+        ns.put(new MalSymbol("pr-str"),  malPrStr);
+        ns.put(new MalSymbol("str"),     malStr);
+        ns.put(new MalSymbol("prn"),     malPrn);
+        ns.put(new MalSymbol("println"), malPrintln);
     }
 }
