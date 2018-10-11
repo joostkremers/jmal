@@ -33,8 +33,7 @@ public class step4_if_fn_do {
             else {
                 try {
                     output = rep(input);
-                }
-                catch(MalException ex) {
+                } catch(MalException ex) {
                     output = "*** Error *** " + ex.getMessage();
                 }
             }
