@@ -171,6 +171,9 @@ public class core {
             @Override
             public MalType apply(MalList args) throws MalException {
                 assertNArgs(args, 1);
+
+                if (args.get(0) == types.Nil) return new MalInt(0);
+
                 int size = args.get(0).assertType(MalSequence.class).size();
 
                 return new MalInt(size);
