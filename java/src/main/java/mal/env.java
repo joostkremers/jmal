@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import mal.types.MalException;
+import mal.types.MalList;
 import mal.types.MalSymbol;
 import mal.types.MalType;
 
@@ -17,10 +18,20 @@ public class env {
         }
 
         Env(Env outer, List<MalType> binds, List<MalType> exprs) throws MalException {
-            if (binds.size() != exprs.size()) throw new MalException("Binds list does not match expressions list.");
+            int nSyms = binds.size();
+            int nArgs = exprs.size();
 
-            for (int i = 0; i<binds.size(); i++) {
+            for (int i = 0; i<nSyms; i++) {
                 if (!(binds.get(i) instanceof MalSymbol)) throw new MalException("Cannot bind non-symbol: " + binds.get(i).toString());
+
+                if (binds.get(i).getJValue().equals("&")) {
+                    if (nSyms == i+1) throw new MalException("Symbol required after `&'.");
+                    if (nSyms > i+2) throw new MalException("Multiple symbols after `&'.");
+                    this.set((MalSymbol)binds.get(i+1), new MalList(exprs.subList(i, exprs.size())));
+                    break;
+                }
+
+                if (nArgs <= i) throw new MalException("Wrong number of arguments: expected " + binds.size() + ", received " + nArgs + ".");
                 this.set((MalSymbol)binds.get(i), exprs.get(i));
             }
 

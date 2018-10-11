@@ -197,7 +197,10 @@ public class step4_if_fn_do {
                 @Override
                 public MalType apply(MalList args) throws MalException {
                     if (params.size() != args.size())
-                        throw new MalException("Wrong number of arguments: expected " + params.size() + ", received " + args.size());
+                        // Check if we have a & in the parameter list.
+                        if (!params.get(params.size()-2).getJValue().equals("&"))
+                            throw new MalException("Wrong number of arguments: expected " + params.size() + ", received " + args.size());
+
                     Env newEnv = new Env(env, params.getJValue(), args.getJValue());
                     return EVAL(body, newEnv);
                 }
