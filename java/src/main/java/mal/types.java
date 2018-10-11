@@ -125,7 +125,7 @@ public class types {
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
-            if (obj.getClass() != this.getClass()) return false;
+            if (!(obj instanceof MalSequence)) return false;
 
             MalSequence that = (MalSequence)obj;
             if (that.size() != this.size()) return false;
