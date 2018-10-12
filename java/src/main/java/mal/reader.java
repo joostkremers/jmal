@@ -263,18 +263,47 @@ public class reader {
     private static MalString processString(String inputStr) throws MalException {
         Pattern rxString = Pattern.compile("\"((?:\\\\.|[^\\\"])*)\"");
         Matcher matcher = rxString.matcher(inputStr);
-        String result;
+        String matchedString;
+
+        // We have to build up the string character by character.
+        // Regexp-replacing won't work, because we need to replace a) `\\' with
+        // `\' and b) `\n' with `0x0A' (i.e, the newline character). If we do (a)
+        // first, the sequence `\\n' is ultimately transformed to `0x0A' (because
+        // (a) yields `\n', which (b) then converts to `0x0A'). If we do (b)
+        // first, `\\n' is transformed to `\0x0A' (note the slash) by (b), after
+        // which (a) doesn't apply anymore. However, the correct result for the
+        // sequence `\\n' would be a backslash followed by `n', i.e., `\n',
+        // which is a *representation* of the newline character, but not the
+        // newline character itself.
 
         if (matcher.matches()) {
-            result = matcher.group(1);
+            matchedString = matcher.group(1);
         } else throw new MalException("Invalid string constant: `" + inputStr + "'.");
 
-        result = result.replace("\\\\", "\\");
-        result = result.replace("\\n", "\n");
-        result = result.replace("\\\"", "\"");
+        StringBuilder result = new StringBuilder();
 
-        if (debug) System.out.println("String: `" + result + "'");
+        for (int i = 0; i < matchedString.length(); i++) {
+            char c = matchedString.charAt(i);
+            if (c == '\\') {
+                char nextChar = matchedString.charAt(++i);
+                switch (nextChar) {
+                case 'n': result.append('\n');
+                    break;
+                case '\\': result.append('\\');
+                    break;
+                case '\"': result.append('\"');
+                    break;
+                default: result.append('\\');
+                    result.append(nextChar);
+                }
+            }
+            else result.append(c);
+        }
 
-        return new MalString(result);
+        String resultString = result.toString();
+
+        if (debug) System.out.println("String: `" + resultString + "'");
+
+        return new MalString(resultString);
     }
 }
