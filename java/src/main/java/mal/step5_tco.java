@@ -53,53 +53,62 @@ public class step5_tco {
     }
 
     public static MalType EVAL(MalType ast, Env env) throws MalException {
-        if (ast instanceof MalList) {
-            MalList astList = (MalList)ast;
-            int size = astList.size();
+        while (true) {
+            if (ast instanceof MalList) {
+                MalList astList = (MalList)ast;
+                int size = astList.size();
 
-            // Empty list is just returned.
-            if (size == 0) {
-                return ast;
+                // Empty list is just returned.
+                if (size == 0) {
+                    return ast;
+                }
+
+                // def!
+                if (astList.get(0).getJValue().equals("def!")) {
+                    return malDef(astList.subList(1,size), env);
+                }
+
+                // let*
+                if (astList.get(0).getJValue().equals("let*")) {
+                    if (size != 3) throw new MalException("Wrong number of arguments for `let*': expected 2, received " + (size-1) + ".");
+                    if (!(astList.get(1) instanceof MalSequence)) throw new MalException("Cannot let-bind: " + astList.get(1).toString());
+
+                    ast = astList.get(2);
+                    env = malLet((MalSequence)astList.get(1), env);
+                    continue;
+                }
+
+                // do
+                if (astList.get(0).getJValue().equals("do")) {
+                    eval_ast(astList.subList(1,size-1), env);
+                    ast = astList.get(size-1);
+                    continue;
+                }
+
+                // if
+                if (astList.get(0).getJValue().equals("if")) {
+                    ast = malIf(astList.subList(1,size), env);
+                    continue;
+                }
+
+                // fn*
+                if (astList.get(0).getJValue().equals("fn*")) {
+                    return malFn(astList.subList(1,size), env);
+                }
+
+                // If not a special form, evaluate the list as a function call.
+                MalList evaledList = (MalList)eval_ast(ast, env);
+
+                if (!(evaledList.get(0) instanceof MalCallable))
+                    throw new MalException("Eval error: not a function.");
+                else {
+                    MalCallable fn = (MalCallable)evaledList.get(0);
+                    return fn.apply(evaledList.subList(1, evaledList.size()));
+                }
             }
-
-            // def!
-            if (astList.get(0).getJValue().equals("def!")) {
-                return malDef(astList.subList(1,size), env);
-            }
-
-            // let*
-            if (astList.get(0).getJValue().equals("let*")) {
-                return malLet(astList.subList(1,size), env);
-            }
-
-            // do
-            if (astList.get(0).getJValue().equals("do")) {
-                MalList result = (MalList)eval_ast(astList.subList(1,size), env);
-                return result.get(size-2);
-            }
-
-            // if
-            if (astList.get(0).getJValue().equals("if")) {
-                return malIf(astList.subList(1,size), env);
-            }
-
-            // fn*
-            if (astList.get(0).getJValue().equals("fn*")) {
-                return malFn(astList.subList(1,size), env);
-            }
-
-            // If not a special form, evaluate the list as a function call.
-            MalList evaledList = (MalList)eval_ast(ast, env);
-
-            if (!(evaledList.get(0) instanceof MalCallable))
-                throw new MalException("Eval error: not a function.");
-            else {
-                MalCallable fn = (MalCallable)evaledList.get(0);
-                return fn.apply(evaledList.subList(1, evaledList.size()));
-            }
+            // If not a list, evaluate and return.
+            else return eval_ast(ast, env);
         }
-        // If not a list, evaluate and return.
-        else return eval_ast(ast, env);
     }
 
     public static String PRINT(MalType arg) {
@@ -163,12 +172,7 @@ public class step5_tco {
         return evaledValue;
     }
 
-    private static MalType malLet(MalList list, Env env) throws MalException {
-        if (list.size() != 2) throw new MalException("Wrong number of arguments for `let*': expected 2, received " + list.size() + ".");
-        if (!(list.get(0) instanceof MalSequence)) throw new MalException("Cannot let-bind: " + list.get(0).toString());
-
-        MalSequence bindList = (MalSequence)list.get(0);
-
+    private static Env malLet(MalSequence bindList, Env env) throws MalException {
         if ((bindList.size() % 2) != 0) throw new MalException("Odd number of elements in bind list.");
 
         Env letEnv = new Env(env);
@@ -177,19 +181,19 @@ public class step5_tco {
             malDef(bindList.subList(i,i+2), letEnv);
         }
 
-        return EVAL(list.get(1), letEnv);
+        return letEnv;
     }
 
-    private static MalType malIf(MalList list, Env env) throws MalException {
+    private static MalList malIf(MalList list, Env env) throws MalException {
         if (!(list.size() == 2 || list.size() == 3))
             throw new MalException("Wrong number of arguments for `if': expected 2-3, received " + list.size() + ".");
 
         MalType test = EVAL(list.get(0), env);
         if (test.equals(types.Nil) || test.equals(types.False)) {
             if (list.size() == 2) return types.Nil;
-            else return EVAL(list.get(2), env);
+            else return list.get(2);
         }
-        else return EVAL(list.get(1), env);
+        else return list.get(1);
     }
 
     private static MalFunction malFn(MalList list, Env env) throws MalException {
