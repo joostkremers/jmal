@@ -52,44 +52,44 @@ public class step5_tco {
         return reader.read_str(arg);
     }
 
-    public static MalType EVAL(MalType arg, Env env) throws MalException {
-        if (arg instanceof MalList) {
-            MalList argList = (MalList)arg;
-            int size = argList.size();
+    public static MalType EVAL(MalType ast, Env env) throws MalException {
+        if (ast instanceof MalList) {
+            MalList astList = (MalList)ast;
+            int size = astList.size();
 
             // Empty list is just returned.
             if (size == 0) {
-                return arg;
+                return ast;
             }
 
             // def!
-            if (argList.get(0).getJValue().equals("def!")) {
-                return malDef(argList.subList(1,size), env);
+            if (astList.get(0).getJValue().equals("def!")) {
+                return malDef(astList.subList(1,size), env);
             }
 
             // let*
-            if (argList.get(0).getJValue().equals("let*")) {
-                return malLet(argList.subList(1,size), env);
+            if (astList.get(0).getJValue().equals("let*")) {
+                return malLet(astList.subList(1,size), env);
             }
 
             // do
-            if (argList.get(0).getJValue().equals("do")) {
-                MalList result = (MalList)eval_ast(argList.subList(1,size), env);
+            if (astList.get(0).getJValue().equals("do")) {
+                MalList result = (MalList)eval_ast(astList.subList(1,size), env);
                 return result.get(size-2);
             }
 
             // if
-            if (argList.get(0).getJValue().equals("if")) {
-                return malIf(argList.subList(1,size), env);
+            if (astList.get(0).getJValue().equals("if")) {
+                return malIf(astList.subList(1,size), env);
             }
 
             // fn*
-            if (argList.get(0).getJValue().equals("fn*")) {
-                return malFn(argList.subList(1,size), env);
+            if (astList.get(0).getJValue().equals("fn*")) {
+                return malFn(astList.subList(1,size), env);
             }
 
             // If not a special form, evaluate the list as a function call.
-            MalList evaledList = (MalList)eval_ast(arg, env);
+            MalList evaledList = (MalList)eval_ast(ast, env);
 
             if (!(evaledList.get(0) instanceof MalCallable))
                 throw new MalException("Eval error: not a function.");
@@ -99,7 +99,7 @@ public class step5_tco {
             }
         }
         // If not a list, evaluate and return.
-        else return eval_ast(arg, env);
+        else return eval_ast(ast, env);
     }
 
     public static String PRINT(MalType arg) {
