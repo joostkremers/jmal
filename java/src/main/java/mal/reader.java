@@ -19,9 +19,6 @@ import mal.types.MalType;
 import mal.types.MalVector;
 
 public class reader {
-    static Console console = System.console();
-    static boolean debug = false;
-
     static private HashMap<String, String> delims;
     static {
         delims = new HashMap<String, String>();
@@ -81,8 +78,6 @@ public class reader {
             tokenizedInput.add(token);
         }
 
-        if (debug) console.format("Tokenized input: %s%n", tokenizedInput);
-
         return tokenizedInput;
     }
 
@@ -103,8 +98,6 @@ public class reader {
         String item;
 
         item = inputForm.peek();
-
-        if (debug) console.format("Item: %s%n", item);
 
         if (item != null) {
             switch (item) {
@@ -155,8 +148,6 @@ public class reader {
 
         while (true) {
             item = inputForm.peek();
-
-            if (debug) console.format("List item: %s%n", item);
 
             if (item == null) throw new MalException("Malformed input: expected `" + closingDelim + "', found EOL.");
             if (item.equals(closingDelim)) {
@@ -232,8 +223,6 @@ public class reader {
     private static MalType read_atom(Reader inputForm) throws MalException {
         String item = inputForm.next();
 
-        if (debug) console.format("Atom: %s%n", item);
-
         Pattern
             rxString = Pattern.compile("\"(?:\\\\.|[^\\\"])*\"?"),
             rxComment = Pattern.compile(";.*"),
@@ -301,8 +290,6 @@ public class reader {
         }
 
         String resultString = result.toString();
-
-        if (debug) System.out.println("String: `" + resultString + "'");
 
         return new MalString(resultString);
     }
