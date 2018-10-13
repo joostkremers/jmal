@@ -26,7 +26,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.2.1</version>
         <configuration>
-          <mainClass>mal.step4_if_fn_do</mainClass>
+          <mainClass>mal.step5_tco</mainClass>
         </configuration>
       </plugin>
     </plugins>
