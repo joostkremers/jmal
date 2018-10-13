@@ -12,6 +12,7 @@ import mal.types.MalList;
 import mal.types.MalSequence;
 import mal.types.MalSymbol;
 import mal.types.MalType;
+import mal.types.MalUserFunction;
 import mal.types.MalVector;
 
 public class step5_tco {
@@ -99,12 +100,17 @@ public class step5_tco {
                 // If not a special form, evaluate the list as a function call.
                 MalList evaledList = (MalList)eval_ast(ast, env);
 
-                if (!(evaledList.get(0) instanceof MalCallable))
-                    throw new MalException("Eval error: not a function.");
-                else {
+                if (evaledList.get(0) instanceof MalCallable) {
                     MalCallable fn = (MalCallable)evaledList.get(0);
                     return fn.apply(evaledList.subList(1, evaledList.size()));
-                }
+
+                } else if (evaledList.get(0) instanceof MalUserFunction) {
+                    MalUserFunction fn = (MalUserFunction)evaledList.get(0);
+
+                    ast = fn.getAst();
+                    env = new Env(fn.getEnv(), fn.params.getJValue(), evaledList.subList(1,size).getJValue());
+                    continue;
+                } else throw new MalException("Eval error: `" + evaledList.get(0) + "' is not a function.");
             }
             // If not a list, evaluate and return.
             else return eval_ast(ast, env);
@@ -148,7 +154,7 @@ public class step5_tco {
         }
 
         if (ast instanceof MalHash) {
-            HashMap<MalType, MalType> astHash = (HashMap)ast.getJValue();
+            HashMap<MalType, MalType> astHash = (HashMap<MalType, MalType>)ast.getJValue();
             MalHash result = new MalHash();
             for(HashMap.Entry<MalType,MalType> entry : astHash.entrySet()) {
                 result.put(entry.getKey(), EVAL(entry.getValue(), env));
@@ -184,7 +190,7 @@ public class step5_tco {
         return letEnv;
     }
 
-    private static MalList malIf(MalList list, Env env) throws MalException {
+    private static MalType malIf(MalList list, Env env) throws MalException {
         if (!(list.size() == 2 || list.size() == 3))
             throw new MalException("Wrong number of arguments for `if': expected 2-3, received " + list.size() + ".");
 
@@ -196,12 +202,19 @@ public class step5_tco {
         else return list.get(1);
     }
 
-    private static MalFunction malFn(MalList list, Env env) throws MalException {
-        if (list.size() != 2) throw new MalException("Wrong number of arguments for `fn*': expected 2, received " + list.size() + ".");
-        if (!(list.get(0) instanceof MalSequence)) throw new MalException("Cannot let-bind: " + list.get(0).toString());
+    private static MalUserFunction malFn(MalList list, Env env) throws MalException {
+        if (list.size() < 2) throw new MalException("fn*: argument list or body missing.");
+        if (list.size() > 2) throw new MalException("fn*: body must be a single form.");
 
+        if (!(list.get(0) instanceof MalSequence)) throw new MalException("Cannot let-bind: " + list.get(0).toString());
         MalSequence params = (MalSequence)list.get(0);
         MalType body = list.get(1);
+
+        MalUserFunction userFn = new MalUserFunction();
+
+        userFn.setAst(body);
+        userFn.setParams(params);
+        userFn.setEnv(env);
 
         MalFunction fn = new MalFunction() {
                 @Override
@@ -216,6 +229,8 @@ public class step5_tco {
                 }
             };
 
-        return fn;
+        userFn.setFn(fn);
+
+        return userFn;
     }
 }

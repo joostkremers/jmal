@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringJoiner;
 
+import mal.env.Env;
+
 public class types {
     public abstract static class MalType {
         Object jValue = null; // The Java value representing the MalType.
@@ -369,6 +371,59 @@ public class types {
         @Override
         public String pr_str(boolean readably) {
             return "#<function@" + this.hashCode() + ">";
+        }
+    }
+
+    public static class MalUserFunction extends MalType {
+        MalType ast;
+        MalSequence params;
+        Env env;
+        MalFunction fn;
+
+        public MalUserFunction() {
+            this.type = "function";
+        }
+
+        @Override
+        public Object getJValue() {
+            return this;
+        }
+
+        @Override
+        public String pr_str(boolean readably) {
+            return "#<function@" + this.hashCode() + ">";
+        }
+
+        public void setAst(MalType ast) {
+            this.ast = ast;
+        }
+
+        public MalType getAst() {
+            return this.ast;
+        }
+
+        public void setParams(MalSequence params) {
+            this.params = params;
+        }
+
+        public MalSequence getParams() {
+            return this.params;
+        }
+
+        public void setEnv(Env env) {
+            this.env = env;
+        }
+
+        public Env getEnv() {
+            return this.env;
+        }
+
+        public void setFn(MalFunction fn) {
+            this.fn = fn;
+        }
+
+        public MalFunction getFn() {
+            return this.fn;
         }
     }
 
