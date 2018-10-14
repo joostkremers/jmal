@@ -1,5 +1,8 @@
 package mal;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.StringJoiner;
 
@@ -305,6 +308,21 @@ public class core {
             }
         };
 
+    static MalFunction malSlurp = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                MalString pathname = args.get(0).assertType(MalString.class);
+
+                try {
+                    String fileContents = String.join("\n", Files.readAllLines(Paths.get(pathname.getJValue())));
+                    return new MalString(fileContents);
+                } catch(IOException ex) {
+                    throw new MalException(ex);
+                }
+            }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
@@ -326,5 +344,6 @@ public class core {
         ns.put(new MalSymbol("prn"),         malPrn);
         ns.put(new MalSymbol("println"),     malPrintln);
         ns.put(new MalSymbol("read-string"), malReadString);
+        ns.put(new MalSymbol("slurp"),       malSlurp);
     }
 }
