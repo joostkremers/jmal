@@ -18,6 +18,16 @@ import mal.types.MalVector;
 public class step6_file {
     static Env repl_env = new Env(null);
 
+    static MalFunction malEval = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                if(args.size() != 1)
+                    throw new MalException("Wrong number of arguments: expected 1, received " + args.size() + ".");
+
+                return EVAL(args.get(0), repl_env);
+            }
+        };
+
     public static void main(String args[]) {
         Console console = System.console();
         String input, output;
@@ -25,6 +35,8 @@ public class step6_file {
         for (MalSymbol symbol : core.ns.keySet()) {
             repl_env.set(symbol, core.ns.get(symbol));
         }
+
+        repl_env.set(new MalSymbol("eval"), malEval);
 
         // Define `not'.
         try {
