@@ -296,25 +296,35 @@ public class core {
             }
         };
 
+    static MalFunction malReadString = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                MalString line = args.get(0).assertType(MalString.class);
+                return reader.read_str(line.getJValue());
+            }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
-        ns.put(new MalSymbol("list"),    malList);
-        ns.put(new MalSymbol("list?"),   malListP);
-        ns.put(new MalSymbol("empty?"),  malEmptyP);
-        ns.put(new MalSymbol("count"),   malCount);
-        ns.put(new MalSymbol("="),       malEqual);
-        ns.put(new MalSymbol("<"),       malLessThan);
-        ns.put(new MalSymbol("<="),      malLessThanOrEqual);
-        ns.put(new MalSymbol(">"),       malGreaterThan);
-        ns.put(new MalSymbol(">="),      malGreaterThanOrEqual);
-        ns.put(new MalSymbol("+"),       malAdd);
-        ns.put(new MalSymbol("-"),       malSubtract);
-        ns.put(new MalSymbol("*"),       malMultiply);
-        ns.put(new MalSymbol("/"),       malDivide);
-        ns.put(new MalSymbol("pr-str"),  malPrStr);
-        ns.put(new MalSymbol("str"),     malStr);
-        ns.put(new MalSymbol("prn"),     malPrn);
-        ns.put(new MalSymbol("println"), malPrintln);
+        ns.put(new MalSymbol("list"),        malList);
+        ns.put(new MalSymbol("list?"),       malListP);
+        ns.put(new MalSymbol("empty?"),      malEmptyP);
+        ns.put(new MalSymbol("count"),       malCount);
+        ns.put(new MalSymbol("="),           malEqual);
+        ns.put(new MalSymbol("<"),           malLessThan);
+        ns.put(new MalSymbol("<="),          malLessThanOrEqual);
+        ns.put(new MalSymbol(">"),           malGreaterThan);
+        ns.put(new MalSymbol(">="),          malGreaterThanOrEqual);
+        ns.put(new MalSymbol("+"),           malAdd);
+        ns.put(new MalSymbol("-"),           malSubtract);
+        ns.put(new MalSymbol("*"),           malMultiply);
+        ns.put(new MalSymbol("/"),           malDivide);
+        ns.put(new MalSymbol("pr-str"),      malPrStr);
+        ns.put(new MalSymbol("str"),         malStr);
+        ns.put(new MalSymbol("prn"),         malPrn);
+        ns.put(new MalSymbol("println"),     malPrintln);
+        ns.put(new MalSymbol("read-string"), malReadString);
     }
 }
