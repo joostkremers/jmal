@@ -45,6 +45,13 @@ public class step6_file {
             System.out.println("Internal error.");
         }
 
+        // Define `load-file'.
+        try {
+            rep("(def! load-file (fn* (f) (eval (read-string (str \"(do \" (slurp f) \")\")))))");
+        } catch(MalException ex) {
+            System.out.println("Internal error.");
+        }
+
         while (true) {
             input = console.readLine("user> ");
             if (input == null) {      // Test for EOF
