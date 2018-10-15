@@ -46,7 +46,7 @@ public class step6_file {
             rep("(def! not (fn* (a) (if a false true)))");
             rep("(def! load-file (fn* (f) (eval (read-string (str \"(do \" (slurp f) \")\")))))");
         } catch(MalException ex) {
-            System.out.println("Internal error. Aborting");
+            System.out.println("Internal error. Aborting.");
             System.exit(1);
         }
 
