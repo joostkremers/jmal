@@ -1,6 +1,5 @@
 package mal;
 
-import java.io.Console;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
