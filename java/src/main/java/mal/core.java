@@ -1,6 +1,7 @@
 package mal;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -315,7 +316,7 @@ public class core {
                 MalString pathname = args.get(0).assertType(MalString.class);
 
                 try {
-                    String fileContents = String.join("\n", Files.readAllLines(Paths.get(pathname.getJValue())));
+                    String fileContents = new String(Files.readAllBytes(Paths.get(pathname.getJValue())), StandardCharsets.UTF_8);
                     return new MalString(fileContents);
                 } catch(IOException ex) {
                     throw new MalException(ex);
