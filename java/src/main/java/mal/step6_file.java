@@ -18,6 +18,7 @@ import mal.types.MalVector;
 public class step6_file {
     static Env repl_env = new Env(null);
 
+    // `eval' is defined here, because it uses `EVAL' and closes over `repl_env'.
     static MalFunction malEval = new MalFunction() {
             @Override
             public MalType apply(MalList args) throws MalException {
@@ -32,24 +33,21 @@ public class step6_file {
         Console console = System.console();
         String input, output;
 
+        // Add the core functions.
         for (MalSymbol symbol : core.ns.keySet()) {
             repl_env.set(symbol, core.ns.get(symbol));
         }
 
+        // Add `eval'.
         repl_env.set(new MalSymbol("eval"), malEval);
 
-        // Define `not'.
+        // Define `not' and `load-file'.
         try {
             rep("(def! not (fn* (a) (if a false true)))");
-        } catch(MalException ex) {
-            System.out.println("Internal error.");
-        }
-
-        // Define `load-file'.
-        try {
             rep("(def! load-file (fn* (f) (eval (read-string (str \"(do \" (slurp f) \")\")))))");
         } catch(MalException ex) {
-            System.out.println("Internal error.");
+            System.out.println("Internal error. Aborting.");
+            System.exit(1);
         }
 
         while (true) {
