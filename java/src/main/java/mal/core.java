@@ -5,8 +5,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringJoiner;
 
+import mal.types.MalAtom;
 import mal.types.MalException;
 import mal.types.MalFunction;
 import mal.types.MalInt;
@@ -324,6 +326,61 @@ public class core {
             }
         };
 
+    static MalFunction malAtom = new MalFunction() {
+          @Override
+          public MalAtom apply(MalList args) throws MalException {
+              assertNArgs(args, 1);
+              return new MalAtom(args.get(0));
+          }
+        };
+
+    static MalFunction malAtomP = new MalFunction() {
+          @Override
+          public MalType apply(MalList args) throws MalException {
+              assertNArgs(args,1);
+              if (args.get(0) instanceof MalAtom)
+                  return types.True;
+              else return types.False;
+          }
+        };
+
+    static MalFunction malDeref = new MalFunction() {
+          @Override
+          public MalType apply(MalList args) throws MalException {
+              assertNArgs(args, 1);
+              args.get(0).assertType(MalAtom.class);
+
+              return (MalType)args.get(0).getJValue();
+          }
+        };
+
+    static MalFunction malReset = new MalFunction() {
+          @Override
+          public MalType apply(MalList args) throws MalException {
+              assertNArgs(args, 2);
+              MalAtom atom = args.get(0).assertType(MalAtom.class);
+              MalType val = args.get(1).assertType(MalType.class);
+
+              atom.setjValue(val);
+              return val;
+          }
+        };
+
+    static MalFunction malSwap = new MalFunction() {
+          @Override
+          public MalType apply(MalList args) throws MalException {
+              assertMinArgs(args, 2);
+              MalAtom atom = args.get(0).assertType(MalAtom.class);
+              MalFunction fn = args.get(1).assertType(MalFunction.class);
+              List<MalType> fnArgs = args.subList(2,args.size()).getJValue();
+              fnArgs.add(0, atom.getJValue());
+
+              MalType result = fn.apply(new MalList(fnArgs));
+              atom.setjValue(result);
+              return result;
+          }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
@@ -346,5 +403,10 @@ public class core {
         ns.put(new MalSymbol("println"),     malPrintln);
         ns.put(new MalSymbol("read-string"), malReadString);
         ns.put(new MalSymbol("slurp"),       malSlurp);
+        ns.put(new MalSymbol("atom"),        malAtom);
+        ns.put(new MalSymbol("atom?"),       malAtomP);
+        ns.put(new MalSymbol("deref"),       malDeref);
+        ns.put(new MalSymbol("reset!"),      malReset);
+        ns.put(new MalSymbol("swap!"),       malSwap);
     }
 }

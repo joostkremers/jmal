@@ -374,7 +374,7 @@ public class types {
         }
     }
 
-    public static class MalUserFunction extends MalType {
+    public static class MalUserFunction extends MalFunction {
         MalType ast;
         MalSequence params;
         Env env;
@@ -425,6 +425,35 @@ public class types {
         public MalFunction getFn() {
             return this.fn;
         }
+
+        @Override
+        public MalType apply(MalList args) throws MalException {
+            return fn.apply(args);
+        }
+    }
+
+    public static class MalAtom extends MalType {
+        MalType jValue;
+
+        public MalAtom(MalType val) {
+            this.type = "atom";
+            this.jValue = val;
+        }
+
+        @Override
+        public MalType getJValue() {
+            return jValue;
+        }
+
+        public void setjValue(MalType val) {
+            this.jValue = val;
+        }
+
+        @Override
+        public String pr_str(boolean readably) {
+            return "(atom " + jValue.pr_str(readably) + ")";
+        }
+
     }
 
     public static class MalException extends Exception {
