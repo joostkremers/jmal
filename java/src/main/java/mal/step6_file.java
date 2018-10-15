@@ -41,15 +41,9 @@ public class step6_file {
         // Add `eval'.
         repl_env.set(new MalSymbol("eval"), malEval);
 
-        // Define `not'.
+        // Define `not' and `load-file'.
         try {
             rep("(def! not (fn* (a) (if a false true)))");
-        } catch(MalException ex) {
-            System.out.println("Internal error.");
-        }
-
-        // Define `load-file'.
-        try {
             rep("(def! load-file (fn* (f) (eval (read-string (str \"(do \" (slurp f) \")\")))))");
         } catch(MalException ex) {
             System.out.println("Internal error.");
