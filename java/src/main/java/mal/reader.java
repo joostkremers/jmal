@@ -57,14 +57,7 @@ public class reader {
     }
 
     public static List<String> tokenizer(String inputLine) {
-        // The regexp is modified a bit so as to require tokens to be consecutive.
-        // Not sure if this is really a good idea. Note that I don't actually do
-        // anything with this in the while loop.
-
-        // Note also that comments aren't tokenized, contrary to what the Mal guide
-        // suggests. This makes it easier to ignore them, especially when they
-        // appear after a form.
-        String tokenRegexString = "\\G(?:[\\s,]*|;.*$)(~@|[\\[\\]{}\\(\\)'`~^@]|\"(?:\\\\.|[^\\\"])*\"?|[^\\s\\[\\]{}\\('\"`,;\\)]+)";
+        String tokenRegexString = "[\\s,]*(~@|[\\[\\]{}\\(\\)'`~^@]|\"(?:\\\\.|[^\\\"])*\"?|;.*|[^\\s\\[\\]{}\\('\"`,;\\)]+)";
         Pattern tokenRegex = Pattern.compile(tokenRegexString);
         Matcher inputMatcher = tokenRegex.matcher(inputLine);
 
@@ -74,7 +67,9 @@ public class reader {
 
         while (inputMatcher.find()) {
             token = inputMatcher.group(1);
-            tokenizedInput.add(token);
+            // Things are easier if comments are thrown out right away.
+            if (token.charAt(0) != ';')
+                tokenizedInput.add(token);
         }
 
         return tokenizedInput;
