@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -372,7 +373,7 @@ public class core {
               assertMinArgs(args, 2);
               MalAtom atom = args.get(0).assertType(MalAtom.class);
               MalFunction fn = args.get(1).assertType(MalFunction.class);
-              List<MalType> fnArgs = args.subList(2,args.size()).getJValue();
+              LinkedList<MalType> fnArgs = (LinkedList<MalType>)args.subList(2,args.size()).getJValue();
               fnArgs.add(0, atom.getJValue());
 
               MalType result = fn.apply(new MalList(fnArgs));
