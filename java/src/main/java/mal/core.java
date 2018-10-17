@@ -382,6 +382,31 @@ public class core {
           }
         };
 
+    static MalFunction malCons = new MalFunction() {
+            @Override
+            public MalList apply(MalList args) throws MalException {
+                assertNArgs(args, 2);
+
+                MalType firstArg = args.get(0);
+
+                System.out.println("First arg: " + firstArg);
+
+                MalSequence secondArg = args.get(1).assertType(MalSequence.class);
+
+                System.out.println("Second arg: " + secondArg);
+
+                List<MalType> oldList = secondArg.getJValue();
+
+                System.out.println(oldList);
+
+                MalType newElem = args.get(0);
+                LinkedList<MalType> newList = new LinkedList<>();
+                newList.add(newElem);
+                newList.addAll(oldList);
+                return new MalList(newList);
+            }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
@@ -409,5 +434,6 @@ public class core {
         ns.put(new MalSymbol("deref"),       malDeref);
         ns.put(new MalSymbol("reset!"),      malReset);
         ns.put(new MalSymbol("swap!"),       malSwap);
+        ns.put(new MalSymbol("cons"),        malCons);
     }
 }
