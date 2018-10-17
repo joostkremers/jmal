@@ -10,6 +10,7 @@ import mal.types.MalFunction;
 import mal.types.MalHash;
 import mal.types.MalList;
 import mal.types.MalSequence;
+import mal.types.MalString;
 import mal.types.MalSymbol;
 import mal.types.MalType;
 import mal.types.MalUserFunction;
@@ -49,6 +50,27 @@ public class step6_file {
             System.out.println("Internal error. Aborting.");
             System.exit(1);
         }
+
+        // Check if we're running a program from the command line.
+        if (args.length > 0) {
+            String filename = args[0];
+            MalList argv = new MalList();
+            for (int i = 1; i < args.length; i++) {
+                argv.add(new MalString(args[i]));
+            }
+            repl_env.set(new MalSymbol("*ARGV*"), argv);
+            try {
+                rep("(load-file \"" + filename +"\")");
+            } catch(MalException ex) {
+                System.out.println("Error: " + ex.getMessage());
+                System.exit(1);
+            } finally {
+                System.exit(0);
+            }
+        }
+
+        // If not, set up an empty *ARGV*.
+        repl_env.set(new MalSymbol("*ARGV*"), new MalList());
 
         while (true) {
             input = console.readLine("user> ");
