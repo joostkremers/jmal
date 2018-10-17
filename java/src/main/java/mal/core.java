@@ -389,19 +389,12 @@ public class core {
 
                 MalType firstArg = args.get(0);
 
-                System.out.println("First arg: " + firstArg);
-
                 MalSequence secondArg = args.get(1).assertType(MalSequence.class);
-
-                System.out.println("Second arg: " + secondArg);
 
                 List<MalType> oldList = secondArg.getJValue();
 
-                System.out.println(oldList);
-
-                MalType newElem = args.get(0);
                 LinkedList<MalType> newList = new LinkedList<>();
-                newList.add(newElem);
+                newList.add(firstArg);
                 newList.addAll(oldList);
                 return new MalList(newList);
             }
