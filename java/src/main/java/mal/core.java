@@ -400,6 +400,19 @@ public class core {
             }
         };
 
+    static MalFunction malConcat = new MalFunction() {
+            @Override
+            public MalList apply(MalList args) throws MalException {
+                LinkedList<MalType> newList = new LinkedList<>();
+
+                for (MalType arg : args.getJValue()) {
+                    MalSequence argList = arg.assertType(MalSequence.class);
+                    newList.addAll(argList.getJValue());
+                }
+                return new MalList(newList);
+            }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
@@ -428,5 +441,6 @@ public class core {
         ns.put(new MalSymbol("reset!"),      malReset);
         ns.put(new MalSymbol("swap!"),       malSwap);
         ns.put(new MalSymbol("cons"),        malCons);
+        ns.put(new MalSymbol("concat"),      malConcat);
     }
 }
