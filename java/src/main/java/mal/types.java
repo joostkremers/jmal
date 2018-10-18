@@ -375,6 +375,8 @@ public class types {
     }
 
     public static class MalUserFunction extends MalFunction {
+        boolean is_macro = false;
+
         MalType ast;
         MalSequence params;
         Env env;
@@ -424,6 +426,14 @@ public class types {
 
         public MalFunction getFn() {
             return this.fn;
+        }
+
+        public boolean isMacro() {
+            return is_macro;
+        }
+
+        public void setMacro() {
+            this.is_macro = true;
         }
 
         @Override
