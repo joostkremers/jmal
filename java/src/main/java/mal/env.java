@@ -48,11 +48,11 @@ public class env {
             else return outer.find(symbol);
         }
 
-        public MalType get(MalSymbol symbol) throws MalException {
+        public MalType get(MalSymbol symbol) {
             Env env = this.find(symbol);
 
             if (env != null) return env.data.get(symbol);
-            else throw new MalException("Symbol value is void: " + symbol.toString());
+            else return null;
         }
     }
 }
