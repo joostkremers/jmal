@@ -307,6 +307,20 @@ public class step8_macros {
         return userFn;
     }
 
+    private static boolean is_macro_call(MalType ast, Env env) {
+        if (ast instanceof MalList) {
+            MalList astList = (MalList)ast;
+
+            if (astList.get(0) instanceof MalSymbol) {
+                MalType val = env.get((MalSymbol)astList.get(0));
+                if (val instanceof MalUserFunction) {
+                    return ((MalUserFunction)val).isMacro();
+                }
+            }
+        }
+        return false;
+    }
+
     private static boolean is_pair(MalType arg) {
         if ((arg instanceof MalSequence) && ((MalSequence)arg).size() > 0) return true;
         else return false;
