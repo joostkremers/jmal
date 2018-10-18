@@ -110,7 +110,7 @@ public class step7_quote {
 
                 // let*
                 if (astList.get(0).getJValue().equals("let*")) {
-                    if (size != 3) throw new MalException("Wrong number of arguments for `let*': expected 2, received " + (size-1) + ".");
+                    if (size != 3) throw new MalException("Wrong number of arguments: expected 2, received " + (size-1) + ".");
                     if (!(astList.get(1) instanceof MalSequence)) throw new MalException("Cannot let-bind: " + astList.get(1).toString());
 
                     ast = astList.get(2);
