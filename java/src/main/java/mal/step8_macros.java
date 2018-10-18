@@ -108,6 +108,11 @@ public class step8_macros {
                     return malDef(astList.subList(1,size), env);
                 }
 
+                // defmacro!
+                if (astList.get(0).getJValue().equals("defmacro!")) {
+                    return malDefMacro(astList.subList(1,size), env);
+                }
+
                 // let*
                 if (astList.get(0).getJValue().equals("let*")) {
                     if (size != 3) throw new MalException("Wrong number of arguments: expected 2, received " + (size-1) + ".");
@@ -228,6 +233,22 @@ public class step8_macros {
         env.set(symbol, evaledValue);
 
         return evaledValue;
+    }
+
+    private static MalType malDefMacro(MalList list, Env env) throws MalException {
+        if (list.size() != 2) throw new MalException("Wrong number of arguments: expected 2, received " + list.size() + ".");
+        if (!(list.get(0) instanceof MalSymbol)) throw new MalException("Cannot define non-symbol: " + list.get(0).toString());
+
+        MalSymbol symbol = (MalSymbol)list.get(0);
+
+        MalType evaledValue = EVAL(list.get(1), env);
+
+        MalUserFunction fn = evaledValue.assertType(MalUserFunction.class);
+        fn.setMacro();
+
+        env.set(symbol, fn);
+
+        return fn;
     }
 
     private static Env malLet(MalSequence bindList, Env env) throws MalException {
