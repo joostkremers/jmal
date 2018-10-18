@@ -218,7 +218,7 @@ public class step8_macros {
     }
 
     private static MalType malDef(MalList list, Env env) throws MalException {
-        if (list.size() != 2) throw new MalException("Wrong number of arguments for `def!': expected 2, received " + list.size() + ".");
+        if (list.size() != 2) throw new MalException("Wrong number of arguments: expected 2, received " + list.size() + ".");
         if (!(list.get(0) instanceof MalSymbol)) throw new MalException("Cannot define non-symbol: " + list.get(0).toString());
 
         MalSymbol symbol = (MalSymbol)list.get(0);
@@ -244,7 +244,7 @@ public class step8_macros {
 
     private static MalType malIf(MalList list, Env env) throws MalException {
         if (!(list.size() == 2 || list.size() == 3))
-            throw new MalException("Wrong number of arguments for `if': expected 2-3, received " + list.size() + ".");
+            throw new MalException("Wrong number of arguments: expected 2-3, received " + list.size() + ".");
 
         MalType test = EVAL(list.get(0), env);
         if (test.equals(types.Nil) || test.equals(types.False)) {
