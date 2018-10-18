@@ -194,7 +194,7 @@ public class types {
 
         public MalHash() {
             jValue = new HashMap<MalType,MalType>();
-            this.type = "hash-jValue";
+            this.type = "hash";
         }
 
         public void put(MalType k, MalType v) {
