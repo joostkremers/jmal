@@ -136,6 +136,19 @@ public class step7_quote {
                     return malFn(astList.subList(1,size), env);
                 }
 
+                // quote
+                if (astList.get(0).getJValue().equals("quote")) {
+                    if (size != 2) throw new MalException("Wrong number of arguments: expected 1, received " + (size-1) + ".");
+                    return astList.get(1);
+                }
+
+                // quasiquote
+                if (astList.get(0).getJValue().equals("quasiquote")) {
+                    if (size != 2) throw new MalException("Wrong number of arguments: expected 1, received " + (size-1) + ".");
+                    ast = malQuasiquote(astList.get(1));
+                    continue;
+                }
+
                 // If not a special form, evaluate the list as a function call.
                 MalList evaledList = (MalList)eval_ast(ast, env);
 
@@ -271,5 +284,55 @@ public class step7_quote {
         userFn.setFn(fn);
 
         return userFn;
+    }
+
+    private static boolean is_pair(MalType arg) {
+        if ((arg instanceof MalSequence) && ((MalSequence)arg).size() > 0) return true;
+        else return false;
+    }
+
+    private static MalType malQuasiquote(MalType ast) throws MalException {
+        MalList result = new MalList();
+        MalList restList = new MalList();
+
+        if (!is_pair(ast)) {
+            result.add(new MalSymbol("quote"));
+            result.add(ast);
+
+            return result;
+        }
+
+        MalSequence astList = (MalSequence)ast;
+
+        if (astList.get(0).getJValue().equals("unquote")) {
+            return astList.get(1);
+        }
+
+        if (is_pair(astList.get(0))) {
+            MalSequence firstElem = (MalSequence)astList.get(0);
+            if (firstElem.get(0).getJValue().equals("splice-unquote")) {
+                result.add(new MalSymbol("concat"));
+                result.add(firstElem.get(1));
+
+                restList.add(new MalSymbol("quasiquote"));
+                restList.add(astList.subList(1,astList.size()));
+
+                result.add(restList);
+                return result;
+            }
+        }
+
+        result.add(new MalSymbol("cons"));
+
+        MalList firstList = new MalList();
+        firstList.add(new MalSymbol("quasiquote"));
+        firstList.add(astList.get(0));
+        result.add(firstList);
+
+        restList.add(new MalSymbol("quasiquote"));
+        restList.add(astList.subList(1,astList.size()));
+        result.add(restList);
+
+        return result;
     }
 }
