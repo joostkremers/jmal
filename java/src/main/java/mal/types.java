@@ -11,7 +11,7 @@ import mal.env.Env;
 public class types {
     public abstract static class MalType {
         Object jValue = null; // The Java value representing the MalType.
-        String type = "type"; // The Mal name of the type.
+        static String type = "type"; // The Mal name of the type.
 
         /**
          * Return the Java value of a MalType.
@@ -47,7 +47,7 @@ public class types {
 
         public MalInt(int value) {
             this.jValue = value;
-            this.type = "int";
+            type = "int";
         }
 
         @Override
@@ -142,12 +142,12 @@ public class types {
     public static class MalList extends MalSequence {
         public MalList() {
             this.jValue = new LinkedList<MalType>();
-            this.type = "list";
+            type = "list";
         }
 
         public MalList(List<MalType> items) {
             this.jValue = items;
-            this.type = "list";
+            type = "list";
         }
 
         @Override
@@ -165,12 +165,12 @@ public class types {
     public static class MalVector extends MalSequence {
         public MalVector() {
             this.jValue = new ArrayList<MalType>();
-            this.type = "vector";
+            type = "vector";
         }
 
         public MalVector(List<MalType> items) {
             this.jValue = items;
-            this.type = "vector";
+            type = "vector";
         }
 
         @Override
@@ -194,7 +194,7 @@ public class types {
 
         public MalHash() {
             jValue = new HashMap<MalType,MalType>();
-            this.type = "hash";
+            type = "hash";
         }
 
         public void put(MalType k, MalType v) {
@@ -229,7 +229,7 @@ public class types {
 
         public MalString(String jValue) {
             this.jValue = jValue;
-            this.type = "string";
+            type = "string";
         }
 
         @Override
@@ -257,7 +257,7 @@ public class types {
 
         public MalSymbol(String name) {
             this.jValue = name;
-            this.type = "symbol";
+            type = "symbol";
         }
 
         @Override
@@ -298,7 +298,7 @@ public class types {
 
         public MalKeyword(String name) {
             this.jValue = name;
-            this.type = "keyword";
+            type = "keyword";
         }
 
         @Override
@@ -315,7 +315,7 @@ public class types {
     private static class MalNil extends MalType {
 
         public MalNil() {
-            this.type = "symbol";
+            type = "symbol";
         }
 
         @Override
@@ -336,7 +336,7 @@ public class types {
 
         public MalBoolean(boolean value) {
             this.jValue = value;
-            this.type = "boolean";
+            type = "boolean";
         }
 
         @Override
@@ -360,7 +360,7 @@ public class types {
 
     public static abstract class MalFunction extends MalType implements MalCallable {
         public MalFunction() {
-            this.type = "function";
+            type = "function";
         }
 
         @Override
@@ -381,7 +381,7 @@ public class types {
         MalFunction fn;
 
         public MalUserFunction() {
-            this.type = "function";
+            type = "function";
         }
 
         @Override
@@ -436,7 +436,7 @@ public class types {
         MalType jValue;
 
         public MalAtom(MalType val) {
-            this.type = "atom";
+            type = "atom";
             this.jValue = val;
         }
 
