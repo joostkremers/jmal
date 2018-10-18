@@ -206,7 +206,7 @@ public class types {
         }
 
         @Override
-        public HashMap getJValue() {
+        public HashMap<MalType,MalType> getJValue() {
             return jValue;
         }
 

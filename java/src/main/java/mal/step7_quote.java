@@ -206,7 +206,7 @@ public class step7_quote {
         }
 
         if (ast instanceof MalHash) {
-            HashMap<MalType, MalType> astHash = (HashMap<MalType, MalType>)ast.getJValue();
+            HashMap<MalType, MalType> astHash = ((MalHash)ast).getJValue();
             MalHash result = new MalHash();
             for(HashMap.Entry<MalType,MalType> entry : astHash.entrySet()) {
                 result.put(entry.getKey(), EVAL(entry.getValue(), env));
