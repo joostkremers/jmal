@@ -94,6 +94,8 @@ public class step8_macros {
 
     public static MalType EVAL(MalType ast, Env env) throws MalException {
         while (true) {
+            ast = macroexpand(ast, env);
+
             if (ast instanceof MalList) {
                 MalList astList = (MalList)ast;
                 int size = astList.size();
@@ -319,6 +321,17 @@ public class step8_macros {
             }
         }
         return false;
+    }
+
+    private static MalType macroexpand(MalType ast, Env env) throws MalException {
+        while (is_macro_call(ast, env)) {
+            MalList astList = (MalList)ast;
+            MalUserFunction fn = (MalUserFunction)env.get((MalSymbol)astList.get(0));
+
+            ast = fn.apply(astList.subList(1,astList.size()));
+        }
+
+        return ast;
     }
 
     private static boolean is_pair(MalType arg) {
