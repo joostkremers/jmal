@@ -413,6 +413,49 @@ public class core {
             }
         };
 
+    static MalFunction malNth = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 2);
+                MalSequence seq = args.get(0).assertType(MalSequence.class);
+                int n = args.get(1).assertType(MalInt.class).getJValue();
+
+                if (n >= seq.size()) throw new MalException("Index out of bounds: " + n + " >= " + seq.size() + ".");
+
+                return seq.get(n);
+            }
+        };
+
+    static MalFunction malFirst = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+
+                MalType firstArg = args.get(0);
+                if (firstArg == types.Nil) return firstArg;
+
+                MalSequence seq = firstArg.assertType(MalSequence.class);
+                if (seq.size() == 0) return types.Nil;
+
+                return seq.get(0);
+            }
+        };
+
+    static MalFunction malRest = new MalFunction() {
+            @Override
+            public MalList apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+
+                MalType firstArg = args.get(0);
+                if (firstArg == types.Nil) return new MalList();
+
+                MalSequence seq = firstArg.assertType(MalSequence.class);
+
+                if (seq.size() < 2) return new MalList();
+                return seq.subList(1,seq.size());
+            }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
@@ -442,5 +485,9 @@ public class core {
         ns.put(new MalSymbol("swap!"),       malSwap);
         ns.put(new MalSymbol("cons"),        malCons);
         ns.put(new MalSymbol("concat"),      malConcat);
+        ns.put(new MalSymbol("nth"),         malNth);
+        ns.put(new MalSymbol("first"),       malFirst);
+        ns.put(new MalSymbol("rest"),        malRest);
+
     }
 }
