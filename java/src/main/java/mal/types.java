@@ -162,6 +162,21 @@ public class types {
         }
     }
 
+    private static class MalNil extends MalList {
+
+        public MalNil() {
+            super();
+            type = "symbol";
+        }
+
+        @Override
+        public String pr_str(boolean readably) {
+            return "nil";
+        }
+    }
+
+    public static final MalNil Nil = new MalNil();
+
     public static class MalVector extends MalSequence {
         public MalVector() {
             this.jValue = new ArrayList<MalType>();
@@ -311,25 +326,6 @@ public class types {
             return jValue;
         }
     }
-
-    private static class MalNil extends MalType {
-
-        public MalNil() {
-            type = "symbol";
-        }
-
-        @Override
-        public Boolean getJValue() {
-            return false;
-        }
-
-        @Override
-        public String pr_str(boolean readably) {
-            return "nil";
-        }
-    }
-
-    public static final MalNil Nil = new MalNil();
 
     private static class MalBoolean extends MalType {
         Boolean jValue;
