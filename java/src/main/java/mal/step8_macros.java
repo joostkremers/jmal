@@ -311,7 +311,7 @@ public class step8_macros {
         if (ast instanceof MalList) {
             MalList astList = (MalList)ast;
 
-            if (astList.get(0) instanceof MalSymbol) {
+            if ((astList.size() > 0) && (astList.get(0) instanceof MalSymbol)) {
                 MalType val = env.get((MalSymbol)astList.get(0));
                 if (val instanceof MalUserFunction) {
                     return ((MalUserFunction)val).isMacro();
