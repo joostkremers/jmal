@@ -143,6 +143,12 @@ public class step8_macros {
                     return malFn(astList.subList(1,size), env);
                 }
 
+                // macroexpand
+                if (astList.get(0).getJValue().equals("macroexpand")) {
+                    if (size != 2) throw new MalException("Wrong number of arguments: expected 1, received " + (size-1) + ".");
+                    return macroexpand(astList.get(1), env);
+                }
+
                 // quote
                 if (astList.get(0).getJValue().equals("quote")) {
                     if (size != 2) throw new MalException("Wrong number of arguments: expected 1, received " + (size-1) + ".");
