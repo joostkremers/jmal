@@ -312,6 +312,11 @@ public class types {
             type = "symbol";
         }
 
+        public MalSymbol(MalString name) {
+            this.jValue = name.getJValue();
+            type = "symbol";
+        }
+
         @Override
         public String getJValue() {
             return jValue;
