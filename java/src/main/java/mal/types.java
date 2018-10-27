@@ -350,7 +350,7 @@ public class types {
         }
     }
 
-    public static class MalKeyword extends MalType {
+    public static class MalKeyword extends MalType implements Comparable<MalKeyword> {
         String jValue;
 
         public MalKeyword(String name) {
@@ -366,6 +366,11 @@ public class types {
         @Override
         public String pr_str(boolean readably) {
             return jValue;
+        }
+
+        @Override
+        public int compareTo(MalKeyword that) {
+            return this.jValue.compareTo(that.jValue);
         }
     }
 
