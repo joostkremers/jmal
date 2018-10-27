@@ -228,7 +228,10 @@ public class types {
         }
 
         public MalType get(MalType k) {
-            return jValue.get(k);
+
+            MalType val = jValue.get(k);
+            if (val == null) return Nil;
+            else return val;
         }
 
         @Override
