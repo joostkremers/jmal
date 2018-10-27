@@ -525,6 +525,10 @@ public class types {
             super(message);
         }
 
+        public MalException(MalType message) {
+            super(message.getJValue().toString());
+        }
+
         public MalException(String message, Throwable cause) {
             super(message, cause);
         }
