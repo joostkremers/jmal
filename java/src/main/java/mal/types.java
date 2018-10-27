@@ -358,6 +358,11 @@ public class types {
             type = "keyword";
         }
 
+        public MalKeyword(MalString name) {
+            this.jValue = name.getJValue();
+            type = "keyword";
+        }
+
         @Override
         public String getJValue() {
             return jValue;
