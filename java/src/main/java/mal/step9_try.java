@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import mal.env.Env;
 import mal.types.MalCallable;
+import mal.types.MalError;
 import mal.types.MalException;
 import mal.types.MalFunction;
 import mal.types.MalHash;
@@ -162,6 +163,12 @@ public class step9_try {
                     if (size != 2) throw new MalException("Wrong number of arguments: expected 1, received " + (size-1) + ".");
                     ast = malQuasiquote(astList.get(1));
                     continue;
+                }
+
+                // try*/catch*
+                if (astList.get(0).getJValue().equals("try*")) {
+                    if (size != 3) throw new MalException("Wrong number of arguments: expected 1, received " + (size-1) + ".");
+                    return malTryCatch(astList.subList(1,size), env);
                 }
 
                 // If not a special form, evaluate the list as a function call.
@@ -390,5 +397,25 @@ public class step9_try {
         result.add(restList);
 
         return result;
+    }
+
+    private static MalType malTryCatch(MalList ast, Env env) throws MalException {
+        MalList catchBlock = ast.get(1).assertType(MalList.class);
+
+        if (catchBlock.size() != 3) throw new MalException("Invalid catch* block.");
+
+        if (!catchBlock.get(0).equals(new MalSymbol("catch*")))
+            throw new MalException("try* without catch* block.");
+
+        try {
+            return EVAL(ast.get(1), env);
+        } catch(MalException ex) {
+            MalSymbol catchVar = catchBlock.get(1).assertType(MalSymbol.class);
+            MalType catchExpr = catchBlock.get(2);
+
+            Env catchEnv = new Env(env);
+            catchEnv.set(catchVar, new MalError(ex.getMalMessage()));
+            return EVAL(catchExpr, catchEnv);
+        }
     }
 }
