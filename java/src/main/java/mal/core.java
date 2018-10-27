@@ -12,12 +12,15 @@ import java.util.StringJoiner;
 import mal.types.MalAtom;
 import mal.types.MalException;
 import mal.types.MalFunction;
+import mal.types.MalHash;
 import mal.types.MalInt;
+import mal.types.MalKeyword;
 import mal.types.MalList;
 import mal.types.MalSequence;
 import mal.types.MalString;
 import mal.types.MalSymbol;
 import mal.types.MalType;
+import mal.types.MalVector;
 
 public class core {
     // Built-in integer arithmetic functions.
@@ -456,6 +459,277 @@ public class core {
             }
         };
 
+    static MalFunction malThrow = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+
+                throw new MalException(args.get(0));
+            }
+        };
+
+    static MalFunction malApply = new MalFunction() {
+          @Override
+          public MalType apply(MalList args) throws MalException {
+              assertMinArgs(args, 1);
+
+              int size = args.size();
+              MalFunction fn = args.get(0).assertType(MalFunction.class);
+              MalList argList = new MalList();
+
+              if (size > 1) {
+                  MalSequence lastArg = args.get(size-1).assertType(MalSequence.class);
+                  argList = args.subList(1,size-1);
+                  argList.getJValue().addAll(lastArg.getJValue());
+              }
+
+              return fn.apply(argList);
+          }
+        };
+
+    static MalFunction malMap = new MalFunction() {
+          @Override
+          public MalType apply(MalList args) throws MalException {
+              assertNArgs(args, 2);
+              MalFunction fn = args.get(0).assertType(MalFunction.class);
+              MalSequence seq = args.get(1).assertType(MalSequence.class);
+
+              MalList result = new MalList();
+
+              for(MalType elem : seq.getJValue()) {
+                  // This is silly. We nee to wrap each argument in a MalList,
+                  // because that's what MalFunction.apply() expects. I'm not
+                  // sure variadic argument lists would be a solution, however,
+                  // because that would require that we unwrap the argument list
+                  // in many locations.
+                  result.add(fn.apply(new MalList(elem)));
+              }
+              return result;
+          }
+        };
+
+    static MalFunction malNilP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                if (args.get(0) == types.Nil) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malTrueP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                if (args.get(0) == types.True) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malFalseP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                if (args.get(0) == types.False) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malSymbol = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                MalString name = args.get(0).assertType(MalString.class);
+                return new MalSymbol(name);
+            }
+        };
+
+    static MalFunction malSymbolP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                if (args.get(0) instanceof MalSymbol) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malKeyword = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+
+                if (args.get(0) instanceof MalKeyword) return args.get(0);
+
+                MalString name = args.get(0).assertType(MalString.class);
+                return new MalKeyword(name);
+            }
+        };
+
+    static MalFunction malKeywordP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                if (args.get(0) instanceof MalKeyword) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malVector = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                return new MalVector(args.getJValue());
+            }
+        };
+
+    static MalFunction malVectorP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                if (args.get(0) instanceof MalVector) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malHashMap = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                int size = args.size();
+                if ((size % 2) != 0) throw new MalException("Odd number of elements in hash map.");
+
+                MalHash result = new MalHash();
+
+                for (int i = 0; i < size; i++) {
+                    MalType key = args.get(i);
+                    if (!(key instanceof MalString || key instanceof MalKeyword))
+                        throw new MalException("Wrong hash key type (" + key.getClass() + ").");
+                    MalType value = args.get(++i);
+
+                    result.put(key, value);
+                }
+                return result;
+            }
+        };
+
+    static MalFunction malMapP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                if (args.get(0) instanceof MalHash) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malAssoc = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertMinArgs(args, 3);
+                int size = args.size();
+                if (((size-1) % 2) != 0) throw new MalException("Odd number of elements in hash map.");
+
+                MalHash newMap = args.get(0).assertType(MalHash.class).copy();
+
+                for (int i = 1; i < size; i++) {
+                    MalType key = args.get(i);
+                    if (!(key instanceof MalString || key instanceof MalKeyword))
+                        throw new MalException("Wrong hash key type (" + key.getClass() + ").");
+                    MalType value = args.get(++i);
+
+                    newMap.put(key, value);
+                }
+                return newMap;
+            }
+        };
+
+    static MalFunction malDissoc = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 2);
+
+                System.out.println("Input: " + args);
+
+                MalHash newMap = args.get(0).assertType(MalHash.class).copy();
+
+                System.out.println("New map: " + newMap);
+
+                for (int i = 1; i < args.size(); i++) {
+                    MalType key = args.get(i);
+                    if (!(key instanceof MalString || key instanceof MalKeyword))
+                        throw new MalException("Wrong hash key type (" + key.getClass() + ").");
+
+                    System.out.println("Delete: " + key);
+
+                    newMap.delete(key);
+                }
+
+                System.out.println("Output: " + newMap);
+
+                return newMap;
+            }
+        };
+
+    static MalFunction malGet = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 2);
+                MalHash map = args.get(0).assertType(MalHash.class);
+                MalType key = args.get(1);
+                if (!(key instanceof MalString || key instanceof MalKeyword))
+                    throw new MalException("Wrong hash key type (" + key.getClass() + ").");
+
+                return map.get(key);
+            }
+        };
+
+    static MalFunction malContainsP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 2);
+                MalHash map = args.get(0).assertType(MalHash.class);
+                MalType key = args.get(1);
+                if (!(key instanceof MalString || key instanceof MalKeyword))
+                    throw new MalException("Wrong hash key type (" + key.getClass() + ").");
+
+                if (map.getJValue().containsKey(key)) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malKeys = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                MalHash map = args.get(0).assertType(MalHash.class);
+                return map.keys();
+            }
+        };
+
+    static MalFunction malVals = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                MalHash map = args.get(0).assertType(MalHash.class);
+
+                return map.values();
+            }
+        };
+
+    static MalFunction malSequentialP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                if (args.get(0) instanceof MalSequence) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malType = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                return new MalString(args.get(0).type);
+            }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
@@ -488,6 +762,27 @@ public class core {
         ns.put(new MalSymbol("nth"),         malNth);
         ns.put(new MalSymbol("first"),       malFirst);
         ns.put(new MalSymbol("rest"),        malRest);
-
+        ns.put(new MalSymbol("throw"),       malThrow);
+        ns.put(new MalSymbol("apply"),       malApply);
+        ns.put(new MalSymbol("map"),         malMap);
+        ns.put(new MalSymbol("nil?"),        malNilP);
+        ns.put(new MalSymbol("true?"),       malTrueP);
+        ns.put(new MalSymbol("false?"),      malFalseP);
+        ns.put(new MalSymbol("symbol"),      malSymbol);
+        ns.put(new MalSymbol("symbol?"),     malSymbolP);
+        ns.put(new MalSymbol("keyword"),     malKeyword);
+        ns.put(new MalSymbol("keyword?"),    malKeywordP);
+        ns.put(new MalSymbol("vector"),      malKeyword);
+        ns.put(new MalSymbol("vector?"),     malKeywordP);
+        ns.put(new MalSymbol("hash-map"),    malHashMap);
+        ns.put(new MalSymbol("map?"),        malMapP);
+        ns.put(new MalSymbol("assoc"),       malAssoc);
+        ns.put(new MalSymbol("dissoc"),      malDissoc);
+        ns.put(new MalSymbol("get"),         malGet);
+        ns.put(new MalSymbol("contains?"),   malContainsP);
+        ns.put(new MalSymbol("keys"),        malKeys);
+        ns.put(new MalSymbol("vals"),        malVals);
+        ns.put(new MalSymbol("sequential?"), malSequentialP);
+        ns.put(new MalSymbol("type"),        malType);
     }
 }
