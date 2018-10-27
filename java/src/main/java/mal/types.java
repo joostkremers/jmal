@@ -145,6 +145,12 @@ public class types {
             type = "list";
         }
 
+        public MalList(MalType item) {
+            this.jValue = new LinkedList<MalType>();
+            type = "list";
+            this.jValue.add(item);
+        }
+
         public MalList(List<MalType> items) {
             this.jValue = items;
             type = "list";
