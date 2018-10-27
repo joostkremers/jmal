@@ -11,7 +11,7 @@ import mal.env.Env;
 public class types {
     public abstract static class MalType {
         Object jValue = null; // The Java value representing the MalType.
-        static String type = "type"; // The Mal name of the type.
+        String type = "type"; // The Mal name of the type.
 
         /**
          * Return the Java value of a MalType.
