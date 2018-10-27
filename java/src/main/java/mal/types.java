@@ -234,6 +234,29 @@ public class types {
             else return val;
         }
 
+        public MalList keys() {
+            LinkedList<MalType> keysList = new LinkedList<>(jValue.keySet());
+            return new MalList(keysList);
+        }
+
+        public MalList values() {
+            LinkedList<MalType> keysList = new LinkedList<>(jValue.values());
+            return new MalList(keysList);
+        }
+
+        public MalType delete(MalType k) {
+            System.out.println("[delete()] " + jValue);
+            MalType res = jValue.remove(k);
+            System.out.println("[delete()] " + jValue + " / " + res);
+            return null;
+        }
+
+        public MalHash copy() {
+            HashMap<MalType,MalType> newMap = (HashMap<MalType,MalType>)this.jValue.clone();
+
+            return new MalHash(newMap);
+        }
+
         @Override
         public HashMap<MalType,MalType> getJValue() {
             return jValue;
