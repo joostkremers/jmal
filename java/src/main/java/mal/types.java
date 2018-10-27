@@ -541,5 +541,23 @@ public class types {
             return new MalString(super.getMessage());
         }
     }
+
+    public static class MalError extends MalType {
+        MalString message;
+
+        public MalError(MalString message) {
+            type = "error";
+            this.message = message;
+        }
+
+        @Override
+        public Object getJValue() {
+            return new MalException(message);
+        }
+
+        @Override
+        public String pr_str(boolean readably) {
+            return message.pr_str(readably);
+        }
     }
 }
