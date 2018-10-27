@@ -515,11 +515,27 @@ public class types {
     }
 
     public static class MalException extends Exception {
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 3809884595479541313L;
 
-        public MalException() { super(); }
-        public MalException(String message) { super(message); }
-        public MalException(String message, Throwable cause) { super(message, cause); }
-        public MalException(Throwable cause) { super(cause); }
+        public MalException() {
+            super();
+        }
+
+        public MalException(String message) {
+            super(message);
+        }
+
+        public MalException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public MalException(Throwable cause) {
+            super(cause);
+        }
+
+        public MalString getMalMessage() {
+            return new MalString(super.getMessage());
+        }
+    }
     }
 }
