@@ -218,6 +218,11 @@ public class types {
             type = "hash";
         }
 
+        public MalHash(HashMap<MalType,MalType> h) {
+            jValue = h;
+            type = "hash";
+        }
+
         public void put(MalType k, MalType v) {
             jValue.put(k, v);
         }
