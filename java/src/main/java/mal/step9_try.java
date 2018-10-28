@@ -408,7 +408,7 @@ public class step9_try {
             throw new MalException("try* without catch* block.");
 
         try {
-            return EVAL(ast.get(1), env);
+            return EVAL(ast.get(0), env);
         } catch(MalException ex) {
             MalSymbol catchVar = catchBlock.get(1).assertType(MalSymbol.class);
             MalType catchExpr = catchBlock.get(2);
