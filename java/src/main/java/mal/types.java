@@ -288,6 +288,11 @@ public class types {
         }
 
         @Override
+        public int hashCode() {
+            return jValue.hashCode();
+        }
+
+        @Override
         public String pr_str(boolean readably) {
             if (readably == false) return jValue;
             else {
@@ -369,6 +374,11 @@ public class types {
         @Override
         public String pr_str(boolean readably) {
             return jValue;
+        }
+
+        @Override
+        public int hashCode() {
+            return jValue.hashCode();
         }
 
         @Override
