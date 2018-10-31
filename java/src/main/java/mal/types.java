@@ -305,6 +305,10 @@ public class types {
                 return "\"" + result + "\"";
             }
         }
+
+        public MalString prepend(String prefix) {
+            return new MalString(prefix + this.jValue);
+        }
     }
 
     public static class MalSymbol extends MalType implements Comparable<MalSymbol> {
