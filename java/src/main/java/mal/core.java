@@ -561,7 +561,7 @@ public class core {
                 if (args.get(0) instanceof MalKeyword) return args.get(0);
 
                 MalString name = args.get(0).assertType(MalString.class);
-                return new MalKeyword(name);
+                return new MalKeyword(name.prepend(":"));
             }
         };
 
