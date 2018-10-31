@@ -245,9 +245,7 @@ public class types {
         }
 
         public MalType delete(MalType k) {
-            System.out.println("[delete()] " + jValue);
-            MalType res = jValue.remove(k);
-            System.out.println("[delete()] " + jValue + " / " + res);
+            jValue.remove(k);
             return null;
         }
 

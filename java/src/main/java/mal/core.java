@@ -645,24 +645,15 @@ public class core {
             public MalType apply(MalList args) throws MalException {
                 assertNArgs(args, 2);
 
-                System.out.println("Input: " + args);
-
                 MalHash newMap = args.get(0).assertType(MalHash.class).copy();
-
-                System.out.println("New map: " + newMap);
 
                 for (int i = 1; i < args.size(); i++) {
                     MalType key = args.get(i);
                     if (!(key instanceof MalString || key instanceof MalKeyword))
                         throw new MalException("Wrong hash key type (" + key.getClass() + ").");
 
-                    System.out.println("Delete: " + key);
-
                     newMap.delete(key);
                 }
-
-                System.out.println("Output: " + newMap);
-
                 return newMap;
             }
         };
