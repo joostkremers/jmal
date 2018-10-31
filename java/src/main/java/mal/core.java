@@ -761,8 +761,8 @@ public class core {
         ns.put(new MalSymbol("symbol?"),     malSymbolP);
         ns.put(new MalSymbol("keyword"),     malKeyword);
         ns.put(new MalSymbol("keyword?"),    malKeywordP);
-        ns.put(new MalSymbol("vector"),      malKeyword);
-        ns.put(new MalSymbol("vector?"),     malKeywordP);
+        ns.put(new MalSymbol("vector"),      malVector);
+        ns.put(new MalSymbol("vector?"),     malVectorP);
         ns.put(new MalSymbol("hash-map"),    malHashMap);
         ns.put(new MalSymbol("map?"),        malMapP);
         ns.put(new MalSymbol("assoc"),       malAssoc);
