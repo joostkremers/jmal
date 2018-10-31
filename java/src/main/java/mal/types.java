@@ -168,7 +168,7 @@ public class types {
         }
     }
 
-    private static class MalNil extends MalList {
+    private static class MalNil extends MalType {
 
         public MalNil() {
             super();
@@ -178,6 +178,11 @@ public class types {
         @Override
         public String pr_str(boolean readably) {
             return "nil";
+        }
+
+        @Override
+        public Object getJValue() {
+            return null;
         }
     }
 
