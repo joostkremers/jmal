@@ -660,6 +660,7 @@ public class core {
             @Override
             public MalType apply(MalList args) throws MalException {
                 assertNArgs(args, 2);
+                if (args.get(0) == types.Nil) return types.Nil;
                 MalHash map = args.get(0).assertType(MalHash.class);
                 MalType key = args.get(1);
                 if (!(key instanceof MalString || key instanceof MalKeyword))
