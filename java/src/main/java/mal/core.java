@@ -643,8 +643,6 @@ public class core {
     static MalFunction malDissoc = new MalFunction() {
             @Override
             public MalType apply(MalList args) throws MalException {
-                assertNArgs(args, 2);
-
                 MalHash newMap = args.get(0).assertType(MalHash.class).copy();
 
                 for (int i = 1; i < args.size(); i++) {
