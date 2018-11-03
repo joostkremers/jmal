@@ -205,7 +205,8 @@ public class step9_try {
     private static MalType eval_ast(MalType ast, Env env) throws MalException {
         if (ast instanceof MalSymbol) {
             MalType result = env.get((MalSymbol)ast);
-            if (result == null) throw new MalException("Unbound symbol: " + ast.getJValue() + ".");
+            // if (result == null) throw new MalException("Unbound symbol: " + ast.getJValue() + ".");
+            if (result == null) throw new MalException("'" + ast.getJValue() + "' not found");
             else return result;
         }
 
