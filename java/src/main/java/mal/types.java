@@ -267,7 +267,7 @@ public class types {
 
         @Override
         public String pr_str(boolean readably) {
-            StringJoiner result = new StringJoiner(", ", "{", "}");
+            StringJoiner result = new StringJoiner(" ", "{", "}");
 
             for (HashMap.Entry<MalType,MalType> entry : jValue.entrySet()) {
                 MalType key = entry.getKey();
