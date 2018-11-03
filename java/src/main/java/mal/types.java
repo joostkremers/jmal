@@ -534,16 +534,20 @@ public class types {
     public static class MalException extends Exception {
         private static final long serialVersionUID = 3809884595479541313L;
 
+        MalType errVal = null;
+
         public MalException() {
             super();
         }
 
         public MalException(String message) {
             super(message);
+            this.errVal = new MalString(message);
         }
 
-        public MalException(MalType message) {
-            super(message.getJValue().toString());
+        public MalException(MalType value) {
+            super(value.pr_str(true));
+            this.errVal = value;
         }
 
         public MalException(String message, Throwable cause) {
@@ -554,27 +558,27 @@ public class types {
             super(cause);
         }
 
-        public MalString getMalMessage() {
-            return new MalString(super.getMessage());
+        public MalType getErrVal() {
+            return this.errVal;
         }
     }
 
     public static class MalError extends MalType {
-        MalString message;
+        MalType errVal;
 
-        public MalError(MalString message) {
+        public MalError(MalType value) {
             type = "error";
-            this.message = message;
+            this.errVal = value;
         }
 
         @Override
         public Object getJValue() {
-            return new MalException(message);
+            return new MalException(errVal);
         }
 
         @Override
         public String pr_str(boolean readably) {
-            return message.pr_str(readably);
+            return errVal.pr_str(readably);
         }
     }
 }

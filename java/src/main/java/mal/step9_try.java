@@ -415,7 +415,7 @@ public class step9_try {
             MalType catchExpr = catchBlock.get(2);
 
             Env catchEnv = new Env(env);
-            catchEnv.set(catchVar, new MalError(ex.getMalMessage()));
+            catchEnv.set(catchVar, new MalError(ex.getErrVal()));
             return EVAL(catchExpr, catchEnv);
         }
     }
