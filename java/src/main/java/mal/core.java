@@ -1,5 +1,6 @@
 package mal;
 
+import java.io.Console;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -720,6 +721,19 @@ public class core {
             }
         };
 
+    static MalFunction malReadLine = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+                String prompt = args.get(0).assertType(MalString.class).getJValue();
+                Console console = System.console();
+                String input = console.readLine(prompt);
+
+                if (input == null) return types.Nil;
+                else return new MalString(input);
+            }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
@@ -782,6 +796,9 @@ public class core {
         ns.put(new MalSymbol("vals"),        malVals);
 
         ns.put(new MalSymbol("sequential?"), malSequentialP);
+
+        ns.put(new MalSymbol("readline"),   malReadLine);
+
         ns.put(new MalSymbol("type"),        malType);
     }
 }
