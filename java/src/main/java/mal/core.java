@@ -727,6 +727,7 @@ public class core {
         ns.put(new MalSymbol("list?"),       malListP);
         ns.put(new MalSymbol("empty?"),      malEmptyP);
         ns.put(new MalSymbol("count"),       malCount);
+
         ns.put(new MalSymbol("="),           malEqual);
         ns.put(new MalSymbol("<"),           malLessThan);
         ns.put(new MalSymbol("<="),          malLessThanOrEqual);
@@ -736,24 +737,30 @@ public class core {
         ns.put(new MalSymbol("-"),           malSubtract);
         ns.put(new MalSymbol("*"),           malMultiply);
         ns.put(new MalSymbol("/"),           malDivide);
+
         ns.put(new MalSymbol("pr-str"),      malPrStr);
         ns.put(new MalSymbol("str"),         malStr);
         ns.put(new MalSymbol("prn"),         malPrn);
         ns.put(new MalSymbol("println"),     malPrintln);
+
         ns.put(new MalSymbol("read-string"), malReadString);
         ns.put(new MalSymbol("slurp"),       malSlurp);
+
         ns.put(new MalSymbol("atom"),        malAtom);
         ns.put(new MalSymbol("atom?"),       malAtomP);
         ns.put(new MalSymbol("deref"),       malDeref);
         ns.put(new MalSymbol("reset!"),      malReset);
         ns.put(new MalSymbol("swap!"),       malSwap);
+
         ns.put(new MalSymbol("cons"),        malCons);
         ns.put(new MalSymbol("concat"),      malConcat);
         ns.put(new MalSymbol("nth"),         malNth);
         ns.put(new MalSymbol("first"),       malFirst);
         ns.put(new MalSymbol("rest"),        malRest);
+
         ns.put(new MalSymbol("throw"),       malThrow);
         ns.put(new MalSymbol("apply"),       malApply);
+
         ns.put(new MalSymbol("map"),         malMap);
         ns.put(new MalSymbol("nil?"),        malNilP);
         ns.put(new MalSymbol("true?"),       malTrueP);
@@ -766,12 +773,14 @@ public class core {
         ns.put(new MalSymbol("vector?"),     malVectorP);
         ns.put(new MalSymbol("hash-map"),    malHashMap);
         ns.put(new MalSymbol("map?"),        malMapP);
+
         ns.put(new MalSymbol("assoc"),       malAssoc);
         ns.put(new MalSymbol("dissoc"),      malDissoc);
         ns.put(new MalSymbol("get"),         malGet);
         ns.put(new MalSymbol("contains?"),   malContainsP);
         ns.put(new MalSymbol("keys"),        malKeys);
         ns.put(new MalSymbol("vals"),        malVals);
+
         ns.put(new MalSymbol("sequential?"), malSequentialP);
         ns.put(new MalSymbol("type"),        malType);
     }
