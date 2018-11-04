@@ -43,7 +43,7 @@ public class stepA_mal {
         // Add `eval'.
         repl_env.set(new MalSymbol("eval"), malEval);
 
-        // Define `not' and `load-file'.
+        // Define `not', or, cond, and `load-file'.
         try {
             rep("(def! not (fn* (a) (if a false true)))");
             rep("(defmacro! or (fn* (& xs) (if (empty? xs) nil (if (= 1 (count xs)) (first xs) `(let* (or_FIXME ~(first xs)) (if or_FIXME or_FIXME (or ~@(rest xs))))))))");
