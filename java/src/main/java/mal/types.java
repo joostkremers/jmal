@@ -439,13 +439,15 @@ public class types {
         }
     }
 
-    public static class MalUserFunction extends MalFunction {
+    public static class MalUserFunction extends MalFunction implements Cloneable {
         boolean is_macro = false;
 
         MalType ast;
         MalSequence params;
         Env env;
         MalFunction fn;
+
+        MalType metadata = Nil;
 
         public MalUserFunction() {
             type = "function";
@@ -501,9 +503,31 @@ public class types {
             this.is_macro = true;
         }
 
+        public MalType getMeta() {
+            return this.metadata;
+        }
+
+        public void setMeta(MalType data) {
+            this.metadata = data;
+        }
+
         @Override
         public MalType apply(MalList args) throws MalException {
             return fn.apply(args);
+        }
+
+        @Override
+        public MalUserFunction clone() {
+            MalUserFunction newFn = new MalUserFunction();
+
+            newFn.is_macro = this.is_macro;
+            newFn.ast = this.ast;
+            newFn.params = this.params;
+            newFn.env = this.env;
+            newFn.fn = this.fn;
+            newFn.metadata = this.metadata;
+
+            return newFn;
         }
     }
 

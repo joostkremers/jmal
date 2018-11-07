@@ -21,6 +21,7 @@ import mal.types.MalSequence;
 import mal.types.MalString;
 import mal.types.MalSymbol;
 import mal.types.MalType;
+import mal.types.MalUserFunction;
 import mal.types.MalVector;
 
 public class core {
@@ -734,6 +735,31 @@ public class core {
             }
         };
 
+    static MalFunction malMeta = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+
+                MalUserFunction fn = args.get(0).assertType(MalUserFunction.class);
+                return fn.getMeta();
+            }
+        };
+
+    static MalFunction malWithMeta = new MalFunction() {
+            @Override
+            public MalFunction apply(MalList args) throws MalException {
+                assertNArgs(args, 2);
+
+                MalUserFunction fn = args.get(0).assertType(MalUserFunction.class);
+                MalType data = args.get(1);
+
+                MalUserFunction newFn = fn.clone();
+                newFn.setMeta(data);
+
+                return newFn;
+            }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
@@ -798,6 +824,9 @@ public class core {
         ns.put(new MalSymbol("sequential?"), malSequentialP);
 
         ns.put(new MalSymbol("readline"),   malReadLine);
+
+        ns.put(new MalSymbol("meta"),       malMeta);
+        ns.put(new MalSymbol("with-meta"),  malWithMeta);
 
         ns.put(new MalSymbol("type"),        malType);
     }
