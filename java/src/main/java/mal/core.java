@@ -21,6 +21,7 @@ import mal.types.MalSequence;
 import mal.types.MalString;
 import mal.types.MalSymbol;
 import mal.types.MalType;
+import mal.types.MalUserFunction;
 import mal.types.MalVector;
 
 public class core {
@@ -759,6 +760,75 @@ public class core {
             }
         };
 
+    static MalFunction malTimeMs = new MalFunction() {
+            @Override
+            public MalString apply(MalList args) throws MalException {
+                assertNArgs(args, 0);
+
+                return new MalString(Long.toString(System.currentTimeMillis()));
+            }
+        };
+
+    static MalFunction malConj = new MalFunction() {
+            @Override
+            public MalString apply(MalList args) throws MalException {
+                assertNArgs(args, 0);
+
+                return new MalString(Long.toString(System.currentTimeMillis()));
+            }
+        };
+
+    static MalFunction malStringP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+
+                if (args.get(0) instanceof MalString) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malNumberP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+
+                if (args.get(0) instanceof MalInt) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malFnP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+
+                if (args.get(0) instanceof MalUserFunction)
+                    if (!((MalUserFunction)args.get(0)).isMacro()) return types.True;
+                if (args.get(0) instanceof MalFunction) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malMacroP = new MalFunction() {
+            @Override
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
+
+                if ((args.get(0) instanceof MalUserFunction) && ((MalUserFunction)args.get(0)).isMacro()) return types.True;
+                else return types.False;
+            }
+        };
+
+    static MalFunction malSeq = new MalFunction() {
+            @Override
+            public MalString apply(MalList args) throws MalException {
+                assertNArgs(args, 0);
+
+                return new MalString(Long.toString(System.currentTimeMillis()));
+            }
+        };
+
     static HashMap<MalSymbol,MalFunction> ns = new HashMap<>();
 
     static {
@@ -822,10 +892,19 @@ public class core {
 
         ns.put(new MalSymbol("sequential?"), malSequentialP);
 
-        ns.put(new MalSymbol("readline"),   malReadLine);
+        ns.put(new MalSymbol("readline"),    malReadLine);
 
-        ns.put(new MalSymbol("meta"),       malMeta);
-        ns.put(new MalSymbol("with-meta"),  malWithMeta);
+        ns.put(new MalSymbol("meta"),        malMeta);
+        ns.put(new MalSymbol("with-meta"),   malWithMeta);
+
+        ns.put(new MalSymbol("time-ms"),     malTimeMs);
+
+        // ns.put(new MalSymbol("conj"),        malConj);
+        ns.put(new MalSymbol("string?"),     malStringP);
+        ns.put(new MalSymbol("number?"),     malNumberP);
+        ns.put(new MalSymbol("fn?"),         malFnP);
+        ns.put(new MalSymbol("macro?"),      malMacroP);
+        // ns.put(new MalSymbol("seq"),         malSeq);
 
         ns.put(new MalSymbol("type"),        malType);
     }
