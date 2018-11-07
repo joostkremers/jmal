@@ -35,6 +35,8 @@ public class stepA_mal {
         Console console = System.console();
         String input, output;
 
+        repl_env.set(new MalSymbol("*host-language*"), new MalString("jmal"));
+
         // Add the core functions.
         for (MalSymbol symbol : core.ns.keySet()) {
             repl_env.set(symbol, core.ns.get(symbol));
@@ -74,6 +76,14 @@ public class stepA_mal {
 
         // If not, set up an empty *ARGV*.
         repl_env.set(new MalSymbol("*ARGV*"), new MalList());
+
+        try {
+            rep("(println (str \"Mal [\" *host-language* \"]\"))");
+        } catch(MalException ex) {
+            System.out.println("Internal error. Aborting.");
+            System.exit(1);
+        }
+
 
         while (true) {
             input = console.readLine("user> ");
