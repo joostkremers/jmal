@@ -378,7 +378,7 @@ public class core {
               assertMinArgs(args, 2);
               MalAtom atom = args.get(0).assertType(MalAtom.class);
               MalFunction fn = args.get(1).assertType(MalFunction.class);
-              LinkedList<MalType> fnArgs = (LinkedList<MalType>)args.subList(2,args.size()).getJValue();
+              List<MalType> fnArgs = args.getJValue().subList(2,args.size());
               fnArgs.add(0, atom.getJValue());
 
               MalType result = fn.apply(new MalList(fnArgs));
