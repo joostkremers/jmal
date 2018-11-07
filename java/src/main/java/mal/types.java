@@ -423,7 +423,9 @@ public class types {
         public MalType apply(MalList args) throws MalException;
     }
 
-    public static abstract class MalFunction extends MalType implements MalCallable {
+    public static abstract class MalFunction extends MalType implements MalCallable, Cloneable {
+        MalType metadata = Nil;
+
         public MalFunction() {
             type = "function";
         }
@@ -433,9 +435,36 @@ public class types {
             return this;
         }
 
+        public MalType getMeta() {
+            return this.metadata;
+        }
+
+        public void setMeta(MalType data) {
+            this.metadata = data;
+        }
+
         @Override
         public String pr_str(boolean readably) {
             return "#<function@" + this.hashCode() + ">";
+        }
+
+        @Override
+        public MalFunction clone() {
+            try {
+                return (MalFunction)super.clone();
+            } catch (CloneNotSupportedException e) {
+                // This feels weird. Basically, I'm creating the clone manually,
+                // so why would I try calling super.clone() first? Note, though,
+                // that this clone always returns MalType, while some built-in
+                // functions return subtypes of MalType.
+                MalFunction newFn = new MalFunction() {
+                        @Override
+                        public MalType apply(MalList args) throws MalException {
+                            return this.apply(args);
+                        }
+                    };
+                return newFn;
+            }
         }
     }
 
@@ -446,8 +475,6 @@ public class types {
         MalSequence params;
         Env env;
         MalFunction fn;
-
-        MalType metadata = Nil;
 
         public MalUserFunction() {
             type = "function";
@@ -501,14 +528,6 @@ public class types {
 
         public void setMacro() {
             this.is_macro = true;
-        }
-
-        public MalType getMeta() {
-            return this.metadata;
-        }
-
-        public void setMeta(MalType data) {
-            this.metadata = data;
         }
 
         @Override

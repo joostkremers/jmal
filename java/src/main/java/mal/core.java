@@ -21,7 +21,6 @@ import mal.types.MalSequence;
 import mal.types.MalString;
 import mal.types.MalSymbol;
 import mal.types.MalType;
-import mal.types.MalUserFunction;
 import mal.types.MalVector;
 
 public class core {
@@ -740,7 +739,7 @@ public class core {
             public MalType apply(MalList args) throws MalException {
                 assertNArgs(args, 1);
 
-                MalUserFunction fn = args.get(0).assertType(MalUserFunction.class);
+                MalFunction fn = args.get(0).assertType(MalFunction.class);
                 return fn.getMeta();
             }
         };
@@ -750,10 +749,10 @@ public class core {
             public MalFunction apply(MalList args) throws MalException {
                 assertNArgs(args, 2);
 
-                MalUserFunction fn = args.get(0).assertType(MalUserFunction.class);
+                MalFunction fn = args.get(0).assertType(MalFunction.class);
                 MalType data = args.get(1);
 
-                MalUserFunction newFn = fn.clone();
+                MalFunction newFn = fn.clone();
                 newFn.setMeta(data);
 
                 return newFn;
