@@ -115,6 +115,10 @@ public class types {
             jValue.add(e);
         }
 
+        public void addAll(MalSequence elems) {
+            jValue.addAll(elems.getJValue());
+        }
+
         public MalType get(int i) {
             return jValue.get(i);
         }
