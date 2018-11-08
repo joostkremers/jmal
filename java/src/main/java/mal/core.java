@@ -828,6 +828,7 @@ public class core {
 
                 if (args.get(0) instanceof MalUserFunction)
                     if (!((MalUserFunction)args.get(0)).isMacro()) return types.True;
+                    else return types.False;
                 if (args.get(0) instanceof MalFunction) return types.True;
                 else return types.False;
             }
