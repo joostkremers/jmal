@@ -771,10 +771,33 @@ public class core {
 
     static MalFunction malConj = new MalFunction() {
             @Override
-            public MalString apply(MalList args) throws MalException {
-                assertNArgs(args, 0);
+            public MalSequence apply(MalList args) throws MalException {
+                assertMinArgs(args, 2);
+                MalSequence collection = args.get(0).assertType(MalSequence.class);
 
-                return new MalString(Long.toString(System.currentTimeMillis()));
+                MalSequence result;
+
+                if (collection instanceof MalList) {
+                    result = new MalList();
+
+                    for (int i = args.size()-1; i > 0 ; i--) {
+                        result.add(args.get(i));
+                    }
+
+                    result.addAll(collection);
+
+                }
+                else { // MalVector
+                    result = new MalVector();
+
+                    result.addAll(collection);
+
+                    for (int i = 1; i < args.size() ; i++) {
+                        result.add(args.get(i));
+                    }
+                }
+
+                return result;
             }
         };
 
@@ -899,7 +922,7 @@ public class core {
 
         ns.put(new MalSymbol("time-ms"),     malTimeMs);
 
-        // ns.put(new MalSymbol("conj"),        malConj);
+        ns.put(new MalSymbol("conj"),        malConj);
         ns.put(new MalSymbol("string?"),     malStringP);
         ns.put(new MalSymbol("number?"),     malNumberP);
         ns.put(new MalSymbol("fn?"),         malFnP);
