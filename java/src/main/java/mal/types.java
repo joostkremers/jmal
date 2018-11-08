@@ -141,6 +141,10 @@ public class types {
             }
             return true;
         }
+
+        public int length() {
+            return jValue.size();
+        }
     }
 
     public static class MalList extends MalSequence {
@@ -317,6 +321,10 @@ public class types {
 
         public MalString prepend(String prefix) {
             return new MalString(prefix + this.jValue);
+        }
+
+        public int length() {
+            return jValue.length();
         }
     }
 
