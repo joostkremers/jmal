@@ -845,10 +845,33 @@ public class core {
 
     static MalFunction malSeq = new MalFunction() {
             @Override
-            public MalString apply(MalList args) throws MalException {
-                assertNArgs(args, 0);
+            public MalType apply(MalList args) throws MalException {
+                assertNArgs(args, 1);
 
-                return new MalString(Long.toString(System.currentTimeMillis()));
+                MalType arg = args.get(0);
+
+                if (arg == types.Nil) return types.Nil;
+
+                if (arg instanceof MalSequence) {
+                    MalSequence seqArg = (MalSequence)arg;
+
+                    if (seqArg.length() == 0) return types.Nil;
+                    else return new MalList(seqArg.getJValue());
+                }
+
+                if (arg instanceof MalString) {
+                    if (((MalString)arg).length() == 0) return types.Nil;
+                    else {
+                        String str = ((MalString)arg).getJValue();
+                        MalList result = new MalList();
+
+                        for (int i = 0; i < str.length(); i++) {
+                            result.add(new MalString(str.charAt(i)));
+                        }
+                        return result;
+                    }
+                }
+                else throw new MalException("Wrong type argument: expected sequence, received " + arg.getClass().getSimpleName());
             }
         };
 
@@ -927,7 +950,7 @@ public class core {
         ns.put(new MalSymbol("number?"),     malNumberP);
         ns.put(new MalSymbol("fn?"),         malFnP);
         ns.put(new MalSymbol("macro?"),      malMacroP);
-        // ns.put(new MalSymbol("seq"),         malSeq);
+        ns.put(new MalSymbol("seq"),         malSeq);
 
         ns.put(new MalSymbol("type"),        malType);
     }
