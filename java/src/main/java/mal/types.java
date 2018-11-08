@@ -295,6 +295,11 @@ public class types {
             type = "string";
         }
 
+        public MalString(char c) {
+            this.jValue = String.valueOf(c);
+            type = "string";
+        }
+
         @Override
         public String getJValue() {
             return jValue;
